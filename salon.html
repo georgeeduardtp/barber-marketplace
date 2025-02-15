@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles de Peluquería</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <a href="index.html">MarketPlace Peluquerías</a>
+            </div>
+            <div class="auth-buttons">
+                <button id="loginBtn">Iniciar Sesión</button>
+                <button id="registerBtn">Registrarse</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <div class="salon-details">
+            <div class="salon-header">
+                <div class="salon-info">
+                    <h1 id="salonName">Cargando...</h1>
+                    <div class="salon-basic-info">
+                        <p id="salonAddress"><i class="icon-location"></i> Cargando dirección...</p>
+                        <p id="salonLocation"><i class="icon-map"></i> Cargando ubicación...</p>
+                        <p id="salonPhone"><i class="icon-phone"></i> Cargando teléfono...</p>
+                    </div>
+                    <div class="rating" id="salonRating">
+                        <!-- Las estrellas se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="salon-content">
+                <div class="salon-images" id="salonImages">
+                    <!-- Las imágenes se cargarán dinámicamente -->
+                </div>
+
+                <div class="salon-description">
+                    <h2>Sobre Nosotros</h2>
+                    <p id="salonDescription">Cargando descripción...</p>
+                </div>
+
+                <div class="salon-services">
+                    <h2>Nuestros Servicios</h2>
+                    <div class="services-grid" id="servicesList">
+                        <!-- Los servicios se cargarán dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="salon-schedule">
+                    <h2>Horarios de Apertura</h2>
+                    <div class="schedule-grid" id="scheduleList">
+                        <!-- Los horarios se cargarán dinámicamente -->
+                    </div>
+                </div>
+
+                <div class="booking-section">
+                    <h2>Reservar Cita</h2>
+                    <form id="bookingForm" class="booking-form">
+                        <div class="form-group">
+                            <label for="serviceSelect">Selecciona el Servicio</label>
+                            <select id="serviceSelect" required>
+                                <option value="">Elige un servicio</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="dateSelect">Selecciona el Día</label>
+                            <input type="date" id="dateSelect" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="timeSlots">Selecciona la Hora</label>
+                            <div id="timeSlots" class="time-slots">
+                                <!-- Las horas se cargarán dinámicamente -->
+                            </div>
+                            <input type="hidden" id="selectedTime" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientName">Nombre Completo</label>
+                            <input type="text" id="clientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientEmail">Correo Electrónico</label>
+                            <input type="email" id="clientEmail" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="clientPhone">Teléfono</label>
+                            <input type="tel" id="clientPhone" required>
+                        </div>
+                        <button type="submit" class="primary-button">Confirmar Reserva</button>
+                    </form>
+                </div>
+
+                <div class="reviews-section">
+                    <h2>Reseñas de Clientes</h2>
+                    <div class="reviews-list" id="reviewsList">
+                        <!-- Las reseñas se cargarán dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Marketplace Peluquerías. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/salon.js"></script>
+</body>
+</html> 

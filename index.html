@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marketplace Peluquerías</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-storage-compat.js"></script>
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">MarketPlace Peluquerías</div>
+            <div class="search-bar">
+                <input type="text" placeholder="Buscar peluquerías...">
+                <button>Buscar</button>
+            </div>
+            <div class="auth-buttons">
+                <button id="loginBtn">Iniciar Sesión</button>
+                <button id="registerBtn">Registrarse</button>
+            </div>
+        </nav>
+    </header>
+
+    <main>
+        <section class="featured-section">
+            <h2>Peluquerías Destacadas</h2>
+            <div class="featured-salons" id="featuredSalons">
+                <!-- Aquí se cargarán dinámicamente las peluquerías destacadas -->
+            </div>
+        </section>
+
+        <section class="categories-section">
+            <h2>Servicios</h2>
+            <div class="categories">
+                <div class="category">Corte de Cabello</div>
+                <div class="category">Tintes</div>
+                <div class="category">Barbería</div>
+                <div class="category">Peinados</div>
+                <div class="category">Tratamientos</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Marketplace Peluquerías. Todos los derechos reservados.</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="js/config.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/setupDatabase.js"></script>
+</body>
+</html>
