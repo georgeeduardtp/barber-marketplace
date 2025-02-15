@@ -65,30 +65,83 @@ async function loadSalonDetails() {
 
 // Cargar imágenes de la peluquería
 function loadImages(fotos) {
+    const carouselTrack = document.querySelector('.carousel-track');
+    const carouselThumbnails = document.querySelector('.carousel-thumbnails');
+    
     if (fotos.length === 0) {
-        salonImages.innerHTML = '<img src="img/default-salon.jpg" alt="Imagen por defecto">';
-        return;
+        fotos = [
+            'img/default-salon.jpg',
+            'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?ixlib=rb-4.0.3',
+            'https://images.unsplash.com/photo-1562322140-8baeececf3df?ixlib=rb-4.0.3',
+            'https://images.unsplash.com/photo-1560066984-138dadb4c035?ixlib=rb-4.0.3'
+        ];
     }
 
-    salonImages.innerHTML = `
-        <div class="main-image">
-            <img src="${fotos[0]}" alt="Imagen principal">
-        </div>
-        <div class="thumbnail-images">
-            ${fotos.map((foto, index) => `
-                <img src="${foto}" alt="Imagen ${index + 1}" 
-                     onclick="changeMainImage(this.src)">
-            `).join('')}
-        </div>
-    `;
+    // Cargar imágenes principales
+    carouselTrack.innerHTML = fotos.map((foto, index) => `
+        <img src="${foto}" 
+             alt="Vista ${index + 1} de la peluquería"
+             class="${index === 0 ? 'active' : ''}"
+             loading="${index === 0 ? 'eager' : 'lazy'}"
+        >
+    `).join('');
+
+    // Cargar miniaturas
+    carouselThumbnails.innerHTML = fotos.map((foto, index) => `
+        <img src="${foto}"
+             alt="Miniatura ${index + 1}"
+             class="${index === 0 ? 'active' : ''}"
+             onclick="changeSlide(${index})"
+             loading="lazy"
+        >
+    `).join('');
+
+    // Configurar botones de navegación
+    const prevButton = document.querySelector('.carousel-button.prev');
+    const nextButton = document.querySelector('.carousel-button.next');
+    
+    if (fotos.length <= 1) {
+        prevButton.style.display = 'none';
+        nextButton.style.display = 'none';
+    } else {
+        prevButton.style.display = 'flex';
+        nextButton.style.display = 'flex';
+        
+        prevButton.onclick = () => changeSlide('prev');
+        nextButton.onclick = () => changeSlide('next');
+    }
 }
 
-// Cambiar imagen principal
-function changeMainImage(src) {
-    const mainImage = document.querySelector('.main-image img');
-    if (mainImage) {
-        mainImage.src = src;
+let currentSlide = 0;
+
+function changeSlide(direction) {
+    const slides = document.querySelectorAll('.carousel-track img');
+    const thumbnails = document.querySelectorAll('.carousel-thumbnails img');
+    
+    if (slides.length <= 1) return;
+
+    if (direction === 'prev') {
+        currentSlide = (currentSlide - 1 + slides.length) % slides.length;
+    } else if (direction === 'next') {
+        currentSlide = (currentSlide + 1) % slides.length;
+    } else if (typeof direction === 'number') {
+        currentSlide = direction;
     }
+
+    // Actualizar imágenes principales
+    slides.forEach(slide => slide.classList.remove('active'));
+    slides[currentSlide].classList.add('active');
+
+    // Actualizar miniaturas
+    thumbnails.forEach(thumb => thumb.classList.remove('active'));
+    thumbnails[currentSlide].classList.add('active');
+    
+    // Scroll suave a la miniatura activa
+    thumbnails[currentSlide].scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center'
+    });
 }
 
 // Cargar servicios
