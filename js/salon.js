@@ -315,40 +315,47 @@ bookingForm.addEventListener('submit', async (e) => {
         const reservaDate = new Date(dateSelect.value);
         reservaDate.setHours(parseInt(hours), parseInt(minutes), 0);
 
+        // Crear objeto de reserva simplificado
         const reserva = {
             peluqueriaId: salonId,
             nombre: clientName,
             email: clientEmail,
             telefono: clientPhone,
-            servicioId: selectedService.id,
             servicio: {
+                id: selectedService.id,
                 nombre: selectedService.nombre,
                 precio: selectedService.precio,
                 duracion: selectedService.duracion
             },
-            fecha: reservaDate,
-            estado: 'pendiente',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+            fecha: new Date(reservaDate.getTime()),
+            estado: 'pendiente'
         };
 
         const submitButton = e.target.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Procesando...';
 
-        await db.collection('reservas').add(reserva);
-        alert('¡Reserva realizada con éxito!');
-        bookingForm.reset();
-        document.querySelectorAll('.time-slot').forEach(s => {
-            s.classList.remove('selected');
-        });
-        document.getElementById('selectedTime').value = '';
+        console.log('Intentando crear reserva:', reserva); // Para debug
+
+        try {
+            const docRef = await db.collection('reservas').add(reserva);
+            console.log('Reserva creada con ID:', docRef.id); // Para debug
+            alert('¡Reserva realizada con éxito! Te contactaremos para confirmar tu cita.');
+            bookingForm.reset();
+            document.querySelectorAll('.time-slot').forEach(s => {
+                s.classList.remove('selected');
+            });
+            document.getElementById('selectedTime').value = '';
+        } catch (error) {
+            console.error('Error detallado al crear reserva:', error); // Para debug
+            alert('Error al crear la reserva. Por favor, intenta nuevamente.');
+        } finally {
+            submitButton.disabled = false;
+            submitButton.textContent = 'Confirmar Reserva';
+        }
     } catch (error) {
-        console.error('Error al crear reserva:', error);
-        alert('Error al crear la reserva');
-    } finally {
-        const submitButton = e.target.querySelector('button[type="submit"]');
-        submitButton.disabled = false;
-        submitButton.textContent = 'Confirmar Reserva';
+        console.error('Error general:', error);
+        alert('Error al procesar la reserva. Por favor, intenta nuevamente.');
     }
 });
 

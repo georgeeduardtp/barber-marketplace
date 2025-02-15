@@ -336,26 +336,36 @@ registerBtn.addEventListener('click', showRegisterModal);
 // Función para verificar y mostrar el panel de peluquería
 async function checkAndShowSalonPanel(userId) {
     try {
+        console.log('Verificando panel de peluquería para userId:', userId);
+        
         const userDoc = await db.collection('users').doc(userId).get();
         const userData = userDoc.data();
+        console.log('Datos del usuario:', userData);
 
-        // Verificar si el perfil está completo
-        if (!userData.profileCompleted) {
-            showInitialSalonPanel(userId, userData.name);
-            return;
-        }
-
-        // Si el perfil está completo, buscar los datos de la peluquería
+        // Buscar si existe una peluquería asociada
         const salonSnapshot = await db.collection('peluquerias')
             .where('adminId', '==', userId)
             .get();
-
+        
+        console.log('¿Se encontró peluquería?', !salonSnapshot.empty);
+        
         if (!salonSnapshot.empty) {
+            // Si existe una peluquería, mostrar el panel de gestión
             const salonData = salonSnapshot.docs[0].data();
             const salonId = salonSnapshot.docs[0].id;
+            console.log('Datos de la peluquería encontrada:', salonData);
             showSalonManagementPanel(salonData, salonId);
+            
+            // Actualizar el estado del usuario si es necesario
+            if (!userData.profileCompleted) {
+                await db.collection('users').doc(userId).update({
+                    profileCompleted: true
+                });
+            }
         } else {
-            console.error('Error: Perfil marcado como completo pero no se encontró la peluquería');
+            // Si no existe peluquería, mostrar el panel inicial
+            console.log('No se encontró peluquería, mostrando panel inicial');
+            showInitialSalonPanel(userId, userData.name);
         }
     } catch (error) {
         console.error('Error al verificar peluquería:', error);
@@ -652,7 +662,7 @@ async function loadPendingBookings(salonId) {
 
         reservas.forEach(reserva => {
             const fecha = new Date(reserva.fecha.toDate());
-            const servicio = serviciosMap[reserva.servicioId] || { nombre: 'Servicio no encontrado' };
+            const servicio = reserva.servicio || { nombre: 'Servicio no encontrado', duracion: 0, precio: 0 };
             
             html += `
                 <div class="booking-item">
