@@ -587,21 +587,30 @@ function showSalonManagementPanel(salonData, salonId) {
     if (existingPanel) existingPanel.remove();
 
     const managementPanel = `
-        <div id="salonPanel" class="salon-panel">
+        <div id="salonPanel" class="salon-panel ${localStorage.getItem('panelMinimized') === 'true' ? 'minimized' : ''}">
+            <button class="minimize-btn" onclick="togglePanel()">${localStorage.getItem('panelMinimized') === 'true' ? '+' : '−'}</button>
             <h2>Panel de Gestión - ${salonData.nombre}</h2>
             <div class="management-sections">
                 <div class="section">
-                    <h3>Reservas Pendientes</h3>
+                    <h3><i class="fas fa-calendar-check"></i>Reservas Pendientes</h3>
                     <div id="pendingBookings" class="bookings-list">
                         Cargando reservas...
                     </div>
                 </div>
                 <div class="section">
-                    <h3>Información de la Peluquería</h3>
-                    <button onclick="editSalonInfo('${salonId}')">Editar Información</button>
+                    <h3><i class="fas fa-store"></i>Información de la Peluquería</h3>
+                    <div class="salon-info-details">
+                        <p><i class="fas fa-signature"></i><strong>Nombre:</strong> ${salonData.nombre}</p>
+                        <p><i class="fas fa-map-marker-alt"></i><strong>Dirección:</strong> ${salonData.direccion}</p>
+                        <p><i class="fas fa-city"></i><strong>Ciudad:</strong> ${salonData.ciudad}</p>
+                        <p><i class="fas fa-mail-bulk"></i><strong>Código Postal:</strong> ${salonData.codigoPostal}</p>
+                        <p><i class="fas fa-phone"></i><strong>Teléfono:</strong> ${salonData.telefono}</p>
+                        <p><i class="fas fa-info-circle"></i><strong>Descripción:</strong> ${salonData.descripcion}</p>
+                    </div>
+                    <button onclick="editSalonInfo('${salonId}', ${JSON.stringify(salonData).replace(/"/g, '&quot;')})">Editar Información</button>
                 </div>
                 <div class="section">
-                    <h3>Servicios</h3>
+                    <h3><i class="fas fa-cut"></i>Servicios</h3>
                     <div id="servicesList">
                         ${salonData.servicios.map(servicio => `
                             <div class="service-item">
@@ -623,6 +632,142 @@ function showSalonManagementPanel(salonData, salonId) {
     // Recargar la lista de peluquerías en la página principal
     if (typeof loadFeaturedSalons === 'function') {
         loadFeaturedSalons();
+    }
+}
+
+// Función para editar la información de la peluquería
+function editSalonInfo(salonId, salonData) {
+    const modal = `
+        <div class="modal" id="editSalonModal">
+            <div class="modal-content">
+                <button class="close-modal" onclick="closeEditModal()">×</button>
+                <h2>Editar Información de la Peluquería</h2>
+                <form id="editSalonForm" class="salon-registration-form">
+                    <div class="form-group">
+                        <h3>Información Básica</h3>
+                        <input type="text" id="salonName" value="${salonData.nombre}" placeholder="Nombre de la Peluquería" required>
+                        <input type="text" id="salonAddress" value="${salonData.direccion}" placeholder="Dirección Completa" required>
+                        <textarea id="salonDescription" placeholder="Descripción de la peluquería y servicios" required>${salonData.descripcion}</textarea>
+                        <input type="tel" id="salonPhone" value="${salonData.telefono}" placeholder="Teléfono de Contacto" required>
+                    </div>
+
+                    <div class="form-group">
+                        <h3>Ubicación</h3>
+                        <input type="text" id="salonCity" value="${salonData.ciudad}" placeholder="Ciudad" required>
+                        <input type="text" id="salonZip" value="${salonData.codigoPostal}" placeholder="Código Postal" required>
+                    </div>
+
+                    <div class="form-group">
+                        <h3>Horarios</h3>
+                        <div id="scheduleInputs">
+                            ${['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'].map(day => `
+                                <div class="schedule-day">
+                                    <label>${day.charAt(0).toUpperCase() + day.slice(1)}</label>
+                                    <div class="time-inputs">
+                                        <input type="time" id="${day}_start" value="${salonData.horarios[day]?.inicio || ''}" 
+                                               ${salonData.horarios[day]?.cerrado ? 'disabled' : ''}>
+                                        <input type="time" id="${day}_end" value="${salonData.horarios[day]?.fin || ''}"
+                                               ${salonData.horarios[day]?.cerrado ? 'disabled' : ''}>
+                                        <label class="checkbox-label">
+                                            <input type="checkbox" id="${day}_closed" 
+                                                   onchange="toggleDaySchedule(this)"
+                                                   ${salonData.horarios[day]?.cerrado ? 'checked' : ''}>
+                                            Cerrado
+                                        </label>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-button">Guardar Cambios</button>
+                </form>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modal);
+    document.body.classList.add('modal-open');
+
+    // Event listener para el formulario
+    document.getElementById('editSalonForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        try {
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.textContent = 'Guardando...';
+
+            const updatedData = {
+                nombre: document.getElementById('salonName').value,
+                direccion: document.getElementById('salonAddress').value,
+                descripcion: document.getElementById('salonDescription').value,
+                telefono: document.getElementById('salonPhone').value,
+                ciudad: document.getElementById('salonCity').value,
+                codigoPostal: document.getElementById('salonZip').value,
+                horarios: {}
+            };
+
+            // Recopilar horarios
+            const dias = ['lunes', 'martes', 'miercoles', 'jueves', 'viernes', 'sabado', 'domingo'];
+            dias.forEach(day => {
+                const closedCheckbox = document.getElementById(`${day}_closed`);
+                const startInput = document.getElementById(`${day}_start`);
+                const endInput = document.getElementById(`${day}_end`);
+                
+                if (closedCheckbox && startInput && endInput) {
+                    const isClosed = closedCheckbox.checked;
+                    updatedData.horarios[day] = isClosed ? 
+                        { cerrado: true } : 
+                        {
+                            inicio: startInput.value || '',
+                            fin: endInput.value || '',
+                            cerrado: false
+                        };
+                }
+            });
+
+            await db.collection('peluquerias').doc(salonId).update(updatedData);
+            
+            // Obtener los datos actualizados de la peluquería
+            const updatedSalonDoc = await db.collection('peluquerias').doc(salonId).get();
+            const updatedSalonData = updatedSalonDoc.data();
+            
+            // Actualizar el panel con la nueva información
+            showSalonManagementPanel(updatedSalonData, salonId);
+            
+            closeEditModal();
+            alert('Información actualizada correctamente');
+        } catch (error) {
+            console.error('Error al actualizar información:', error);
+            alert('Error al actualizar la información: ' + error.message);
+        } finally {
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = false;
+            submitButton.textContent = 'Guardar Cambios';
+        }
+    });
+}
+
+// Función para cerrar el modal de edición
+function closeEditModal() {
+    document.getElementById('editSalonModal').remove();
+    document.body.classList.remove('modal-open');
+}
+
+// Función para alternar el estado del panel
+function togglePanel() {
+    const panel = document.getElementById('salonPanel');
+    const minimizeBtn = panel.querySelector('.minimize-btn');
+    
+    if (panel.classList.contains('minimized')) {
+        panel.classList.remove('minimized');
+        minimizeBtn.textContent = '−';
+        localStorage.setItem('panelMinimized', 'false');
+    } else {
+        panel.classList.add('minimized');
+        minimizeBtn.textContent = '+';
+        localStorage.setItem('panelMinimized', 'true');
     }
 }
 
