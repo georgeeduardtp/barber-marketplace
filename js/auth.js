@@ -592,8 +592,22 @@ function showSalonManagementPanel(salonData, salonId) {
             <h2>Panel de Gestión - ${salonData.nombre}</h2>
             <div class="management-sections">
                 <div class="section">
-                    <h3><i class="fas fa-calendar-check"></i>Reservas Pendientes</h3>
-                    <div id="pendingBookings" class="bookings-list">
+                    <h3><i class="fas fa-calendar-check"></i>Gestión de Reservas</h3>
+                    <div class="reservas-filtros">
+                        <select id="filtroEstado" onchange="filtrarReservas('${salonId}')">
+                            <option value="todas">Todas las reservas</option>
+                            <option value="pendiente">Pendientes</option>
+                            <option value="confirmada">Confirmadas</option>
+                            <option value="cancelada">Canceladas</option>
+                        </select>
+                        <input type="date" id="filtroFecha" onchange="filtrarReservas('${salonId}')">
+                    </div>
+                    <div class="reservas-navegacion">
+                        <button onclick="cambiarPaginaReservas(-1, '${salonId}')" class="nav-btn" id="prevPage">Anterior</button>
+                        <span id="paginaActual">Página 1</span>
+                        <button onclick="cambiarPaginaReservas(1, '${salonId}')" class="nav-btn" id="nextPage">Siguiente</button>
+                    </div>
+                    <div id="reservasList" class="bookings-list">
                         Cargando reservas...
                     </div>
                 </div>
@@ -627,11 +641,162 @@ function showSalonManagementPanel(salonData, salonId) {
     `;
 
     document.querySelector('main').insertAdjacentHTML('afterbegin', managementPanel);
-    loadPendingBookings(salonId);
+    
+    // Inicializar fecha del filtro
+    const filtroFecha = document.getElementById('filtroFecha');
+    const today = new Date().toISOString().split('T')[0];
+    filtroFecha.value = today;
+    
+    // Cargar reservas iniciales
+    cargarReservas(salonId);
     
     // Recargar la lista de peluquerías en la página principal
     if (typeof loadFeaturedSalons === 'function') {
         loadFeaturedSalons();
+    }
+}
+
+// Variables globales para la paginación
+let paginaActual = 1;
+const reservasPorPagina = 5;
+let totalReservas = 0;
+
+// Función para cargar reservas con filtros
+async function cargarReservas(salonId, pagina = 1) {
+    const reservasList = document.getElementById('reservasList');
+    const filtroEstado = document.getElementById('filtroEstado').value;
+    const filtroFecha = document.getElementById('filtroFecha').value;
+
+    try {
+        // Crear fechas para el inicio y fin del día seleccionado
+        const startDate = new Date(filtroFecha);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(filtroFecha);
+        endDate.setHours(23, 59, 59, 999);
+
+        let reservas = [];
+
+        try {
+            // Intentar primero con la consulta completa
+            let query = db.collection('reservas')
+                .where('peluqueriaId', '==', salonId);
+
+            // Aplicar filtros solo si no son los valores por defecto
+            if (filtroEstado !== 'todas') {
+                query = query.where('estado', '==', filtroEstado);
+            }
+            
+            if (filtroFecha) {
+                query = query.where('fecha', '>=', startDate)
+                           .where('fecha', '<=', endDate);
+            }
+
+            const snapshot = await query.get();
+            snapshot.forEach(doc => {
+                reservas.push({ ...doc.data(), id: doc.id });
+            });
+
+        } catch (indexError) {
+            console.log('Error de índice, usando consulta alternativa:', indexError);
+            
+            // Si falla por el índice, hacer una consulta más simple
+            const snapshot = await db.collection('reservas')
+                .where('peluqueriaId', '==', salonId)
+                .get();
+
+            snapshot.forEach(doc => {
+                const reserva = doc.data();
+                const fechaReserva = reserva.fecha.toDate();
+                
+                // Filtrar manualmente por fecha y estado
+                if ((!filtroFecha || (fechaReserva >= startDate && fechaReserva <= endDate)) && 
+                    (filtroEstado === 'todas' || reserva.estado === filtroEstado)) {
+                    reservas.push({ ...reserva, id: doc.id });
+                }
+            });
+        }
+
+        // Ordenar por fecha (de más próxima a más lejana)
+        reservas.sort((a, b) => {
+            const fechaA = a.fecha.toDate();
+            const fechaB = b.fecha.toDate();
+            // Comparar con la fecha actual para ordenar primero las más próximas
+            const ahora = new Date();
+            // Si la fecha ya pasó, ponerla al final
+            if (fechaA < ahora && fechaB < ahora) {
+                return fechaB - fechaA; // Las fechas pasadas se ordenan de más reciente a más antigua
+            } else if (fechaA < ahora) {
+                return 1; // A es pasada, mover al final
+            } else if (fechaB < ahora) {
+                return -1; // B es pasada, mover al final
+            }
+            return fechaA - fechaB; // Ordenar fechas futuras de más próxima a más lejana
+        });
+
+        totalReservas = reservas.length;
+        const totalPaginas = Math.ceil(totalReservas / reservasPorPagina);
+        paginaActual = Math.min(pagina, totalPaginas);
+
+        // Calcular índices para la paginación
+        const inicio = (paginaActual - 1) * reservasPorPagina;
+        const fin = inicio + reservasPorPagina;
+        const reservasPaginadas = reservas.slice(inicio, fin);
+
+        let html = '';
+        if (reservasPaginadas.length === 0) {
+            html = '<p class="text-center">No hay reservas que coincidan con los filtros</p>';
+        } else {
+            reservasPaginadas.forEach(reserva => {
+                const fecha = reserva.fecha.toDate();
+                html += `
+                    <div class="booking-item ${reserva.estado}">
+                        <div class="booking-info">
+                            <p><strong>Cliente:</strong> ${reserva.nombre}</p>
+                            <p><strong>Teléfono:</strong> ${reserva.telefono}</p>
+                            <p><strong>Email:</strong> ${reserva.email}</p>
+                            <p><strong>Fecha:</strong> ${fecha.toLocaleDateString()}</p>
+                            <p><strong>Hora:</strong> ${fecha.toLocaleTimeString()}</p>
+                            <p><strong>Servicio:</strong> ${reserva.servicio.nombre} (${reserva.servicio.duracion} min - €${reserva.servicio.precio})</p>
+                            <p><strong>Estado:</strong> <span class="estado-${reserva.estado}">${reserva.estado}</span></p>
+                        </div>
+                        <div class="booking-actions">
+                            ${reserva.estado === 'pendiente' ? `
+                                <button onclick="confirmarReserva('${reserva.id}')" class="confirm-btn">Confirmar</button>
+                                <button onclick="cancelarReserva('${reserva.id}')" class="cancel-btn">Cancelar</button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        reservasList.innerHTML = html;
+
+        // Actualizar navegación
+        document.getElementById('paginaActual').textContent = `Página ${paginaActual} de ${totalPaginas}`;
+        document.getElementById('prevPage').disabled = paginaActual === 1;
+        document.getElementById('nextPage').disabled = paginaActual === totalPaginas;
+
+    } catch (error) {
+        console.error('Error al cargar reservas:', error);
+        reservasList.innerHTML = '<p class="text-center">Error al cargar las reservas</p>';
+    }
+}
+
+// Función para filtrar reservas
+function filtrarReservas(salonId) {
+    paginaActual = 1; // Resetear a la primera página al filtrar
+    cargarReservas(salonId, paginaActual);
+}
+
+// Función para cambiar de página
+function cambiarPaginaReservas(direccion, salonId) {
+    const nuevaPagina = paginaActual + direccion;
+    const totalPaginas = Math.ceil(totalReservas / reservasPorPagina);
+    
+    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+        paginaActual = nuevaPagina;
+        cargarReservas(salonId, paginaActual);
     }
 }
 
@@ -771,78 +936,19 @@ function togglePanel() {
     }
 }
 
-// Función para cargar las reservas pendientes
-async function loadPendingBookings(salonId) {
-    const bookingsList = document.getElementById('pendingBookings');
-    if (!bookingsList) return;
-
-    try {
-        // Primero obtener los datos de la peluquería para tener acceso a sus servicios
-        const salonDoc = await db.collection('peluquerias').doc(salonId).get();
-        const salonData = salonDoc.data();
-        const serviciosMap = {};
-        
-        // Crear un mapa de servicios para búsqueda rápida
-        salonData.servicios.forEach(servicio => {
-            serviciosMap[servicio.id] = servicio;
-        });
-
-        const snapshot = await db.collection('reservas')
-            .where('peluqueriaId', '==', salonId)
-            .where('estado', '==', 'pendiente')
-            .get();
-
-        if (snapshot.empty) {
-            bookingsList.innerHTML = '<p>No hay reservas pendientes</p>';
-            return;
-        }
-
-        let html = '';
-        const reservas = [];
-        snapshot.forEach(doc => {
-            reservas.push({...doc.data(), id: doc.id});
-        });
-        
-        reservas.sort((a, b) => a.fecha.toDate() - b.fecha.toDate());
-
-        reservas.forEach(reserva => {
-            const fecha = new Date(reserva.fecha.toDate());
-            const servicio = reserva.servicio || { nombre: 'Servicio no encontrado', duracion: 0, precio: 0 };
-            
-            html += `
-                <div class="booking-item">
-                    <div class="booking-info">
-                        <p><strong>Cliente:</strong> ${reserva.nombre}</p>
-                        <p><strong>Teléfono:</strong> ${reserva.telefono}</p>
-                        <p><strong>Email:</strong> ${reserva.email}</p>
-                        <p><strong>Fecha:</strong> ${fecha.toLocaleDateString()}</p>
-                        <p><strong>Hora:</strong> ${fecha.toLocaleTimeString()}</p>
-                        <p><strong>Servicio:</strong> ${servicio.nombre} (${servicio.duracion} min - €${servicio.precio})</p>
-                    </div>
-                    <div class="booking-actions">
-                        <button onclick="confirmarReserva('${reserva.id}')" class="confirm-btn">Confirmar</button>
-                        <button onclick="cancelarReserva('${reserva.id}')" class="cancel-btn">Cancelar</button>
-                    </div>
-                </div>
-            `;
-        });
-        
-        bookingsList.innerHTML = html;
-    } catch (error) {
-        console.error('Error al cargar reservas:', error);
-        bookingsList.innerHTML = '<p>Error al cargar las reservas</p>';
-    }
-}
-
 // Función para confirmar una reserva
 async function confirmarReserva(reservaId) {
     try {
+        // Obtener la reserva antes de actualizarla para tener el peluqueriaId
+        const reservaDoc = await db.collection('reservas').doc(reservaId).get();
+        const peluqueriaId = reservaDoc.data().peluqueriaId;
+
         await db.collection('reservas').doc(reservaId).update({
             estado: 'confirmada'
         });
-        // Recargar las reservas pendientes
-        const reserva = await db.collection('reservas').doc(reservaId).get();
-        loadPendingBookings(reserva.data().peluqueriaId);
+        
+        // Recargar las reservas usando cargarReservas
+        cargarReservas(peluqueriaId, paginaActual);
     } catch (error) {
         console.error('Error al confirmar reserva:', error);
         alert('Error al confirmar la reserva');
@@ -853,12 +959,16 @@ async function confirmarReserva(reservaId) {
 async function cancelarReserva(reservaId) {
     if (confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
         try {
+            // Obtener la reserva antes de actualizarla para tener el peluqueriaId
+            const reservaDoc = await db.collection('reservas').doc(reservaId).get();
+            const peluqueriaId = reservaDoc.data().peluqueriaId;
+
             await db.collection('reservas').doc(reservaId).update({
                 estado: 'cancelada'
             });
-            // Recargar las reservas pendientes
-            const reserva = await db.collection('reservas').doc(reservaId).get();
-            loadPendingBookings(reserva.data().peluqueriaId);
+            
+            // Recargar las reservas usando cargarReservas
+            cargarReservas(peluqueriaId, paginaActual);
         } catch (error) {
             console.error('Error al cancelar reserva:', error);
             alert('Error al cancelar la reserva');
