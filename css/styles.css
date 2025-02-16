@@ -456,7 +456,7 @@ footer {
 .login-modal input:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
 }
 
 .login-modal .submit-button {
@@ -529,14 +529,15 @@ footer {
 /* Estilos para las tarjetas de peluquerías */
 .salon-card {
     background: white;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
     overflow: hidden;
-    transition: transform 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .salon-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 .salon-image {
@@ -575,15 +576,16 @@ footer {
 .salon-card button {
     width: 100%;
     padding: 1rem;
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, #2980b9, var(--primary-color));
     color: white;
     border: none;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .salon-card button:hover {
-    background-color: #357ABD;
+    background: linear-gradient(135deg, #2980b9, var(--primary-color));
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 /* Botón de cerrar modal */
@@ -603,6 +605,13 @@ body.modal-open {
     padding: 2rem;
     margin: 2rem 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-panel::after {
+    display: none;
 }
 
 .admin-panel h2 {
@@ -624,17 +633,39 @@ body.modal-open {
     border-radius: 5px;
     cursor: pointer;
     font-size: 1rem;
-    transition: background-color 0.3s;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-actions button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease-out;
+    pointer-events: none;
 }
 
 .admin-actions button:hover {
     background-color: #357ABD;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.admin-actions button:hover::after {
+    transform: translate(-50%, -50%) scale(1);
 }
 
 .salon-accounts-list {
     background-color: #f8f9fa;
     padding: 1.5rem;
     border-radius: 5px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .salons-list {
@@ -644,9 +675,17 @@ body.modal-open {
 
 .salon-item {
     background-color: white;
-    padding: 1rem;
-    border-radius: 5px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.salon-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 .salon-item p {
@@ -664,6 +703,13 @@ body.modal-open {
     padding: 2rem;
     margin: 2rem 0;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.salon-panel::after {
+    display: none;
 }
 
 .salon-panel h2 {
@@ -763,11 +809,36 @@ body.modal-open {
     overflow: hidden;
 }
 
+.section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.section::after {
+    display: none;
+}
+
 .salon-info-details {
     background-color: #f8f9fa;
     padding: 1.5rem;
     border-radius: 8px;
     margin-bottom: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.salon-info-details:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 .salon-info-details p {
@@ -794,13 +865,6 @@ body.modal-open {
 
 .horarios-list p {
     margin: 0.3rem 0;
-}
-
-.section {
-    background-color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
 .section h3 {
@@ -834,20 +898,66 @@ body.modal-open {
 
 .section button {
     width: 100%;
-    padding: 0.8rem;
-    background-color: var(--primary-color);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
+    padding: 1rem;
     margin-top: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section button::after {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%);
+    top: -50%;
+    left: -50%;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0.5);
 }
 
 .section button:hover {
-    background-color: #357ABD;
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.section button:hover::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.section button i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.section button:hover i {
+    transform: scale(1.1);
+}
+
+.section button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
 }
 
 .bookings-list {
@@ -860,19 +970,9 @@ body.modal-open {
 }
 
 .service-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background-color: #f8f9fa;
-    border-radius: 8px;
-    margin-bottom: 0.8rem;
-    transition: all 0.3s ease;
-}
-
-.service-item:hover {
-    background-color: #f0f2f5;
-    transform: translateX(5px);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .service-item span {
@@ -1647,9 +1747,10 @@ body.modal-open {
     background: #f8f9fa;
     padding: 1.5rem;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .service-card:hover {
@@ -1758,7 +1859,7 @@ body.modal-open {
 .booking-form select:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
 }
 
 .time-slots {
@@ -1978,7 +2079,7 @@ body.modal-open {
 #editServicesModal .login-modal input:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
 }
 
 #editServicesModal .login-modal .submit-button {
@@ -2044,16 +2145,18 @@ body.modal-open {
     padding: 1.5rem;
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.reservas-full-panel .stat-card::after {
+    display: none;
 }
 
 .reservas-full-panel .stat-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
 .reservas-full-panel .stat-card i {
@@ -2228,4 +2331,40 @@ body.modal-open {
 
 .reservas-full-panel::-webkit-scrollbar-thumb:hover {
     background: var(--secondary-color);
+}
+
+/* Loader */
+.loader-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.9);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loader {
+    width: 50px;
+    height: 50px;
+    border: 5px solid var(--background-color);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loader-container.active {
+    display: flex;
 } 

@@ -16,9 +16,19 @@ function handleScroll() {
 // Event listener para el scroll
 window.addEventListener('scroll', handleScroll);
 
+// Funciones para el loader
+function showLoader() {
+    document.querySelector('.loader-container').classList.add('active');
+}
+
+function hideLoader() {
+    document.querySelector('.loader-container').classList.remove('active');
+}
+
 // Cargar peluquerías destacadas
 async function loadFeaturedSalons() {
     try {
+        showLoader();
         const snapshot = await db.collection('peluquerias')
             .limit(6)
             .get();
@@ -54,6 +64,8 @@ async function loadFeaturedSalons() {
     } catch (error) {
         console.error('Error al cargar peluquerías:', error);
         featuredSalonsContainer.innerHTML = '<p>Error al cargar peluquerías</p>';
+    } finally {
+        hideLoader();
     }
 }
 
@@ -124,6 +136,7 @@ async function searchSalons() {
     }
 
     try {
+        showLoader();
         const snapshot = await db.collection('peluquerias').get();
         const results = [];
 
@@ -161,6 +174,8 @@ async function searchSalons() {
         console.error('Error al buscar peluquerías:', error);
         searchResults.innerHTML = '<div class="no-results">Error al realizar la búsqueda</div>';
         searchResults.classList.add('active');
+    } finally {
+        hideLoader();
     }
 }
 

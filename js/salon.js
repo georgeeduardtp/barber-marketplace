@@ -19,9 +19,19 @@ const salonDescription = document.getElementById('salonDescription');
 const salonPhone = document.getElementById('salonPhone');
 const salonLocation = document.getElementById('salonLocation');
 
+// Funciones para el loader
+function showLoader() {
+    document.querySelector('.loader-container').classList.add('active');
+}
+
+function hideLoader() {
+    document.querySelector('.loader-container').classList.remove('active');
+}
+
 // Cargar datos de la peluquería
 async function loadSalonDetails() {
     try {
+        showLoader();
         const doc = await db.collection('peluquerias').doc(salonId).get();
         
         if (doc.exists) {
@@ -61,6 +71,8 @@ async function loadSalonDetails() {
     } catch (error) {
         console.error('Error al cargar detalles:', error);
         showError('Error al cargar los detalles de la peluquería');
+    } finally {
+        hideLoader();
     }
 }
 
@@ -510,6 +522,7 @@ bookingForm.addEventListener('submit', async (e) => {
     const selectedDate = dateSelect.value;
 
     try {
+        showLoader();
         const submitButton = e.target.querySelector('button[type="submit"]');
         submitButton.disabled = true;
         submitButton.textContent = 'Verificando disponibilidad...';
@@ -578,6 +591,7 @@ bookingForm.addEventListener('submit', async (e) => {
         console.error('Error al crear la reserva:', error);
         alert('Error al procesar la reserva. Por favor, intenta nuevamente.');
     } finally {
+        hideLoader();
         const submitButton = e.target.querySelector('button[type="submit"]');
         submitButton.disabled = false;
         submitButton.textContent = 'Confirmar Reserva';
