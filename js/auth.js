@@ -854,22 +854,54 @@ function cambiarPaginaReservas(direccion, salonId) {
 // Función para editar la información de la peluquería
 function editSalonInfo(salonId, salonData) {
     const modal = `
-        <div class="modal" id="editSalonModal">
+        <div class="modal" id="editInfoModal">
             <div class="modal-content">
-                <button class="close-modal" onclick="closeEditModal()">×</button>
-                <h2>Editar Información de la Peluquería</h2>
+                <div class="modal-header">
+                    <i class="fas fa-store"></i>
+                    <h2>Editar Información de la Peluquería</h2>
+                    <p class="modal-subtitle">Actualiza los datos de tu negocio</p>
+                    <button class="close-modal" onclick="closeEditModal()">×</button>
+                </div>
                 <form id="editSalonForm" class="salon-registration-form">
                     <div class="form-group">
                         <h3>Información Básica</h3>
+                        <label for="salonName">
+                            <i class="fas fa-signature"></i>
+                            Nombre del Negocio
+                        </label>
                         <input type="text" id="salonName" value="${salonData.nombre}" placeholder="Nombre de la Peluquería" required>
+                        
+                        <label for="salonAddress">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Dirección
+                        </label>
                         <input type="text" id="salonAddress" value="${salonData.direccion}" placeholder="Dirección Completa" required>
+                        
+                        <label for="salonDescription">
+                            <i class="fas fa-info-circle"></i>
+                            Descripción
+                        </label>
                         <textarea id="salonDescription" placeholder="Descripción de la peluquería y servicios" required>${salonData.descripcion}</textarea>
+                        
+                        <label for="salonPhone">
+                            <i class="fas fa-phone"></i>
+                            Teléfono
+                        </label>
                         <input type="tel" id="salonPhone" value="${salonData.telefono}" placeholder="Teléfono de Contacto" required>
                     </div>
 
                     <div class="form-group">
                         <h3>Ubicación</h3>
+                        <label for="salonCity">
+                            <i class="fas fa-city"></i>
+                            Ciudad
+                        </label>
                         <input type="text" id="salonCity" value="${salonData.ciudad}" placeholder="Ciudad" required>
+                        
+                        <label for="salonZip">
+                            <i class="fas fa-mail-bulk"></i>
+                            Código Postal
+                        </label>
                         <input type="text" id="salonZip" value="${salonData.codigoPostal}" placeholder="Código Postal" required>
                     </div>
 
@@ -896,7 +928,10 @@ function editSalonInfo(salonId, salonData) {
                         </div>
                     </div>
 
-                    <button type="submit" class="submit-button">Guardar Cambios</button>
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-save"></i>
+                        Guardar Cambios
+                    </button>
                 </form>
             </div>
         </div>
@@ -967,7 +1002,7 @@ function editSalonInfo(salonId, salonData) {
 
 // Función para cerrar el modal de edición
 function closeEditModal() {
-    document.getElementById('editSalonModal').remove();
+    document.getElementById('editInfoModal').remove();
     document.body.classList.remove('modal-open');
 }
 
