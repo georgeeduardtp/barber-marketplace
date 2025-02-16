@@ -1,9 +1,5 @@
 // Referencias a elementos del DOM
 const loginBtn = document.getElementById('loginBtn');
-const registerBtn = document.getElementById('registerBtn');
-
-// Ocultar el botón de registro
-registerBtn.style.display = 'none';
 
 // Estado de autenticación
 auth.onAuthStateChanged(async user => {
@@ -67,16 +63,45 @@ function showAdminPanel() {
 function showCreateSalonAccountModal() {
     const modal = `
         <div class="modal" id="createSalonModal">
-            <div class="modal-content">
-                <h2>Crear Cuenta de Peluquería</h2>
-                <p class="modal-info">Solo se crearán las credenciales de acceso. La peluquería deberá completar su perfil al iniciar sesión.</p>
+            <div class="modal-content login-modal">
+                <button class="close-btn" onclick="document.getElementById('createSalonModal').remove()"><i class="fas fa-times"></i></button>
+                <div class="modal-header">
+                    <i class="fas fa-cut"></i>
+                    <h2>Crear Cuenta de Peluquería</h2>
+                    <p class="modal-subtitle">Registro de nueva peluquería en el sistema</p>
+                </div>
                 <form id="createSalonForm">
-                    <input type="text" id="salonName" placeholder="Nombre del Negocio" required>
-                    <input type="email" id="salonEmail" placeholder="Email" required>
-                    <input type="password" id="salonPassword" placeholder="Contraseña" required>
-                    <button type="submit">Crear Cuenta</button>
+                    <div class="form-group">
+                        <label for="salonName">
+                            <i class="fas fa-store"></i>
+                            Nombre del Negocio
+                        </label>
+                        <input type="text" id="salonName" placeholder="Nombre de la peluquería" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="salonEmail">
+                            <i class="fas fa-envelope"></i>
+                            Correo electrónico
+                        </label>
+                        <input type="email" id="salonEmail" placeholder="Email de acceso" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="salonPassword">
+                            <i class="fas fa-lock"></i>
+                            Contraseña
+                        </label>
+                        <input type="password" id="salonPassword" placeholder="Contraseña de acceso" required>
+                        <p class="field-info">La contraseña debe tener al menos 6 caracteres</p>
+                    </div>
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-plus-circle"></i>
+                        Crear Cuenta
+                    </button>
                 </form>
-                <button class="close-modal" onclick="document.getElementById('createSalonModal').remove()">Cerrar</button>
+                <div class="modal-info">
+                    <i class="fas fa-info-circle"></i>
+                    <p>La peluquería podrá completar su perfil al iniciar sesión por primera vez</p>
+                </div>
             </div>
         </div>
     `;
@@ -86,11 +111,15 @@ function showCreateSalonAccountModal() {
     // Event listener para el formulario
     document.getElementById('createSalonForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const submitButton = e.target.querySelector('button[type="submit"]');
         const email = document.getElementById('salonEmail').value;
         const password = document.getElementById('salonPassword').value;
         const name = document.getElementById('salonName').value;
         
         try {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creando cuenta...';
+            
             // Crear usuario en Authentication
             const userCredential = await auth.createUserWithEmailAndPassword(email, password);
             
@@ -103,13 +132,55 @@ function showCreateSalonAccountModal() {
                 profileCompleted: false
             });
             
-            alert('Cuenta de peluquería creada exitosamente. La peluquería podrá completar su perfil al iniciar sesión.');
             document.getElementById('createSalonModal').remove();
+            showSuccessMessage('Cuenta creada exitosamente');
             loadSalonAccounts();
         } catch (error) {
-            alert('Error al crear cuenta: ' + error.message);
+            submitButton.disabled = false;
+            submitButton.innerHTML = '<i class="fas fa-plus-circle"></i> Crear Cuenta';
+            
+            let errorMessage = 'Error al crear la cuenta';
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage = 'Este correo electrónico ya está registrado';
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage = 'La contraseña debe tener al menos 6 caracteres';
+            }
+            
+            showErrorMessage(errorMessage);
         }
     });
+}
+
+// Función para mostrar mensaje de éxito
+function showSuccessMessage(message) {
+    const alert = `
+        <div class="alert success">
+            <i class="fas fa-check-circle"></i>
+            ${message}
+            <button class="close-btn" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', alert);
+    setTimeout(() => {
+        const alertElement = document.querySelector('.alert');
+        if (alertElement) alertElement.remove();
+    }, 3000);
+}
+
+// Función para mostrar mensaje de error
+function showErrorMessage(message) {
+    const alert = `
+        <div class="alert error">
+            <i class="fas fa-exclamation-circle"></i>
+            ${message}
+            <button class="close-btn" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', alert);
+    setTimeout(() => {
+        const alertElement = document.querySelector('.alert');
+        if (alertElement) alertElement.remove();
+    }, 3000);
 }
 
 // Función para cargar la lista de peluquerías
@@ -208,15 +279,33 @@ async function deleteSalonAndUser(userId, peluqueriaId) {
 function showLoginModal() {
     const modal = `
         <div class="modal" id="loginModal">
-            <div class="modal-content">
-                <h2>Iniciar Sesión</h2>
+            <div class="modal-content login-modal">
+                <button class="close-btn" onclick="document.getElementById('loginModal').remove()"><i class="fas fa-times"></i></button>
+                <div class="modal-header">
+                    <i class="fas fa-user-circle"></i>
+                    <h2>Iniciar Sesión</h2>
+                    <p class="modal-subtitle">Bienvenido de nuevo</p>
+                </div>
                 <form id="loginForm">
-                    <input type="email" id="loginEmail" placeholder="Email" required>
-                    <input type="password" id="loginPassword" placeholder="Contraseña" required>
-                    <button type="submit">Iniciar Sesión</button>
+                    <div class="form-group">
+                        <label for="loginEmail">
+                            <i class="fas fa-envelope"></i>
+                            Correo electrónico
+                        </label>
+                        <input type="email" id="loginEmail" placeholder="Tu correo electrónico" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">
+                            <i class="fas fa-lock"></i>
+                            Contraseña
+                        </label>
+                        <input type="password" id="loginPassword" placeholder="Tu contraseña" required>
+                    </div>
+                    <button type="submit" class="submit-button">
+                        <i class="fas fa-sign-in-alt"></i>
+                        Iniciar Sesión
+                    </button>
                 </form>
-                <button onclick="loginWithGoogle()">Iniciar Sesión con Google</button>
-                <button class="close-modal" onclick="document.getElementById('loginModal').remove()">Cerrar</button>
             </div>
         </div>
     `;
@@ -225,113 +314,81 @@ function showLoginModal() {
     // Agregar event listener al formulario
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
         e.preventDefault();
+        const submitButton = e.target.querySelector('button[type="submit"]');
         const email = document.getElementById('loginEmail').value;
         const password = document.getElementById('loginPassword').value;
         
         try {
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Iniciando sesión...';
+            
             await auth.signInWithEmailAndPassword(email, password);
             document.getElementById('loginModal').remove();
         } catch (error) {
-            alert('Error al iniciar sesión: ' + error.message);
+            submitButton.disabled = false;
+            submitButton.innerHTML = '<i class="fas fa-sign-in-alt"></i> Iniciar Sesión';
+            
+            let errorMessage = 'Error al iniciar sesión';
+            if (error.code === 'auth/user-not-found') {
+                errorMessage = 'Usuario no encontrado';
+            } else if (error.code === 'auth/wrong-password') {
+                errorMessage = 'Contraseña incorrecta';
+            }
+            
+            alert(errorMessage);
         }
     });
-}
-
-// Función para mostrar el modal de registro
-function showRegisterModal() {
-    const modal = `
-        <div class="modal" id="registerModal">
-            <div class="modal-content">
-                <h2>Registrarse</h2>
-                <form id="registerForm">
-                    <input type="text" id="registerName" placeholder="Nombre" required>
-                    <input type="email" id="registerEmail" placeholder="Email" required>
-                    <input type="password" id="registerPassword" placeholder="Contraseña" required>
-                    <button type="submit">Registrarse</button>
-                </form>
-                <button class="close-modal" onclick="document.getElementById('registerModal').remove()">Cerrar</button>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modal);
-    
-    // Agregar event listener al formulario
-    document.getElementById('registerForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const email = document.getElementById('registerEmail').value;
-        const password = document.getElementById('registerPassword').value;
-        const name = document.getElementById('registerName').value;
-        
-        try {
-            const userCredential = await auth.createUserWithEmailAndPassword(email, password);
-            await db.collection('users').doc(userCredential.user.uid).set({
-                name: name,
-                email: email,
-                role: 'client',
-                createdAt: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            document.getElementById('registerModal').remove();
-        } catch (error) {
-            alert('Error al registrarse: ' + error.message);
-        }
-    });
-}
-
-// Función para iniciar sesión con Google
-async function loginWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    try {
-        const result = await auth.signInWithPopup(provider);
-        // Crear o actualizar documento del usuario
-        await db.collection('users').doc(result.user.uid).set({
-            name: result.user.displayName,
-            email: result.user.email,
-            role: 'client',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-        
-        if (document.getElementById('loginModal')) {
-            document.getElementById('loginModal').remove();
-        }
-    } catch (error) {
-        console.error('Error en login con Google:', error);
-        alert('Error al iniciar sesión con Google');
-    }
 }
 
 // Función para actualizar la UI cuando el usuario está logueado
 function updateUILoggedIn(user, userData) {
-    loginBtn.textContent = userData.role === 'admin' ? 'Panel Admin' : 'Mi Cuenta';
-    registerBtn.style.display = 'none';
+    const authButtons = document.querySelector('.auth-buttons');
+    const userMenu = document.querySelector('.user-menu');
     
-    // Agregar menú desplegable
-    const userMenu = document.createElement('div');
-    userMenu.className = 'user-menu';
-    userMenu.innerHTML = `
-        <p>Usuario: ${user.email}</p>
-        <p>Rol: ${userData.role}</p>
-        <button onclick="auth.signOut()">Cerrar Sesión</button>
-    `;
+    // Ocultar botones de auth y mostrar menú de usuario
+    authButtons.style.display = 'none';
+    userMenu.style.display = 'flex';
     
-    // Reemplazar el botón de login con el menú
-    loginBtn.parentNode.replaceChild(userMenu, loginBtn);
+    // Actualizar información del usuario
+    const userAvatar = userMenu.querySelector('.user-avatar');
+    const userName = userMenu.querySelector('.user-name');
+    const userRole = userMenu.querySelector('.user-role');
+    
+    // Establecer la primera letra del email como avatar
+    userAvatar.textContent = user.email.charAt(0).toUpperCase();
+    
+    // Establecer nombre de usuario (email o nombre si está disponible)
+    userName.textContent = userData.name || user.email;
+    
+    // Traducir y mostrar el rol
+    let roleText = 'Cliente';
+    if (userData.role === 'admin') roleText = 'Administrador';
+    if (userData.role === 'peluqueria') roleText = 'Peluquería';
+    userRole.textContent = roleText;
+    
+    // Configurar botones del menú desplegable
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', () => {
+        auth.signOut();
+    });
 }
 
 // Función para actualizar la UI cuando el usuario no está logueado
 function updateUILoggedOut() {
-    // Restaurar botones originales si existe el menú de usuario
+    const authButtons = document.querySelector('.auth-buttons');
     const userMenu = document.querySelector('.user-menu');
-    if (userMenu) {
-        userMenu.parentNode.replaceChild(loginBtn, userMenu);
-    }
     
-    loginBtn.textContent = 'Iniciar Sesión';
-    registerBtn.style.display = 'block';
+    // Mostrar botones de auth y ocultar menú de usuario
+    authButtons.style.display = 'flex';
+    userMenu.style.display = 'none';
+    
+    // Configurar event listener para el botón de login
+    const loginBtn = document.getElementById('loginBtn');
+    loginBtn.addEventListener('click', showLoginModal);
 }
 
-// Event Listeners
+// Event Listener
 loginBtn.addEventListener('click', showLoginModal);
-registerBtn.addEventListener('click', showRegisterModal);
 
 // Función para verificar y mostrar el panel de peluquería
 async function checkAndShowSalonPanel(userId) {
@@ -399,6 +456,7 @@ function showSalonRegistrationForm(userId, businessName) {
 
     const registrationForm = `
         <div id="salonPanel" class="salon-panel">
+            <button class="close-btn" onclick="if(confirm('¿Estás seguro de que deseas cancelar la configuración?')) { showInitialSalonPanel('${userId}', '${businessName}'); }"><i class="fas fa-times"></i></button>
             <h2>Completar Perfil de ${businessName}</h2>
             <p class="registration-info">Para comenzar a recibir reservas, necesitamos información detallada de tu peluquería.</p>
             <form id="salonRegistrationForm" class="salon-registration-form">
@@ -592,6 +650,7 @@ function showSalonManagementPanel(salonData, salonId) {
             <h2>Panel de Gestión - ${salonData.nombre}</h2>
             <div class="management-sections">
                 <div class="section">
+                    <button class="close-btn" onclick="this.parentElement.style.display='none'"><i class="fas fa-times"></i></button>
                     <h3><i class="fas fa-calendar-check"></i>Gestión de Reservas</h3>
                     <div class="reservas-filtros">
                         <select id="filtroEstado" onchange="filtrarReservas('${salonId}')">
@@ -612,6 +671,7 @@ function showSalonManagementPanel(salonData, salonId) {
                     </div>
                 </div>
                 <div class="section">
+                    <button class="close-btn" onclick="this.parentElement.style.display='none'"><i class="fas fa-times"></i></button>
                     <h3><i class="fas fa-store"></i>Información de la Peluquería</h3>
                     <div class="salon-info-details">
                         <p><i class="fas fa-signature"></i><strong>Nombre:</strong> ${salonData.nombre}</p>
@@ -624,10 +684,12 @@ function showSalonManagementPanel(salonData, salonId) {
                     <button onclick="editSalonInfo('${salonId}', ${JSON.stringify(salonData).replace(/"/g, '&quot;')})">Editar Información</button>
                 </div>
                 <div class="section">
+                    <button class="close-btn" onclick="this.parentElement.style.display='none'"><i class="fas fa-times"></i></button>
                     <h3><i class="fas fa-cut"></i>Servicios</h3>
                     <div id="servicesList">
                         ${salonData.servicios.map(servicio => `
                             <div class="service-item">
+                                <button class="close-btn" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                                 <span>${servicio.nombre}</span>
                                 <span>€${servicio.precio}</span>
                                 <span>${servicio.duracion} min</span>
@@ -750,6 +812,7 @@ async function cargarReservas(salonId, pagina = 1) {
                 const fecha = reserva.fecha.toDate();
                 html += `
                     <div class="booking-item ${reserva.estado}">
+                        <button class="close-btn" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                         <div class="booking-info">
                             <p><strong>Cliente:</strong> ${reserva.nombre}</p>
                             <p><strong>Teléfono:</strong> ${reserva.telefono}</p>

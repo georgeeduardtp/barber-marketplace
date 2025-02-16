@@ -1,5 +1,3 @@
-https://georgeeduardtp.github.io/barber-marketplace/
-
 🔥 Estructura del Marketplace (Usando Firebase y Sin Pago Online)
 1️⃣ Frontend (Interfaz de Usuario)
 🔹 Página Principal:

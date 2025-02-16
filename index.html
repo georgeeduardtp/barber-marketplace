@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Marketplace Peluquerías</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/jpeg" href="img/logo.jpeg">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <!-- Firebase SDK -->
@@ -24,7 +26,22 @@
             </div>
             <div class="auth-buttons">
                 <button id="loginBtn">Iniciar Sesión</button>
-                <button id="registerBtn">Registrarse</button>
+            </div>
+            <!-- Nuevo menú de usuario (inicialmente oculto) -->
+            <div class="user-menu" style="display: none;">
+                <div class="user-info">
+                    <div class="user-avatar">U</div>
+                    <div class="user-details">
+                        <span class="user-name">Usuario</span>
+                        <span class="user-role">Rol</span>
+                    </div>
+                </div>
+                <div class="dropdown-content">
+                    <div class="dropdown-content-inner">
+                        <button id="settingsBtn">Configuración</button>
+                        <button id="logoutBtn">Cerrar Sesión</button>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
@@ -40,11 +57,26 @@
         <section class="categories-section">
             <h2>Servicios</h2>
             <div class="categories">
-                <div class="category">Corte de Cabello</div>
-                <div class="category">Tintes</div>
-                <div class="category">Barbería</div>
-                <div class="category">Peinados</div>
-                <div class="category">Tratamientos</div>
+                <div class="category">
+                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    Corte de Cabello
+                </div>
+                <div class="category">
+                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    Tintes
+                </div>
+                <div class="category">
+                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    Barbería
+                </div>
+                <div class="category">
+                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    Peinados
+                </div>
+                <div class="category">
+                    <button class="close-btn"><i class="fas fa-times"></i></button>
+                    Tratamientos
+                </div>
             </div>
         </section>
     </main>
