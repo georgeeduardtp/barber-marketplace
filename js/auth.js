@@ -368,8 +368,18 @@ function updateUILoggedIn(user, userData) {
     
     // Configurar botones del menú desplegable
     const logoutBtn = document.getElementById('logoutBtn');
+    const settingsBtn = document.getElementById('settingsBtn');
+    
     logoutBtn.addEventListener('click', () => {
         auth.signOut();
+    });
+
+    settingsBtn.addEventListener('click', () => {
+        if (userData.role === 'admin' || userData.role === 'peluqueria') {
+            // Asegurar que el panel estará desplegado
+            localStorage.setItem('panelMinimized', 'false');
+            window.location.href = 'index.html';
+        }
     });
 }
 
@@ -644,9 +654,11 @@ function showSalonManagementPanel(salonData, salonId) {
     const existingPanel = document.getElementById('salonPanel');
     if (existingPanel) existingPanel.remove();
 
+    // Asegurarnos de que el panel esté desplegado si venimos desde el botón de configuración
+    const panelState = localStorage.getItem('panelMinimized');
     const managementPanel = `
-        <div id="salonPanel" class="salon-panel ${localStorage.getItem('panelMinimized') === 'true' ? 'minimized' : ''}">
-            <button class="minimize-btn" onclick="togglePanel()">${localStorage.getItem('panelMinimized') === 'true' ? '+' : '−'}</button>
+        <div id="salonPanel" class="salon-panel ${panelState === 'true' ? 'minimized' : ''}">
+            <button class="minimize-btn" onclick="togglePanel()">${panelState === 'true' ? '+' : '−'}</button>
             <h2>Panel de Gestión - ${salonData.nombre}</h2>
             <div class="management-sections">
                 <div class="section">

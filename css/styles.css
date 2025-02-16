@@ -54,6 +54,15 @@ nav {
     white-space: nowrap;
 }
 
+.logo a {
+    text-decoration: none;
+    color: var(--primary-color);
+}
+
+.logo a:hover {
+    color: var(--primary-color);
+}
+
 header.scrolled .logo {
     font-size: 1rem;
 }
@@ -63,6 +72,7 @@ header.scrolled .logo {
     max-width: 400px;
     display: flex;
     gap: 0.3rem;
+    position: relative;
 }
 
 .search-bar input {
@@ -730,6 +740,9 @@ body.modal-open {
     gap: 2rem;
     padding: 1rem;
     transition: all 0.3s ease;
+    max-height: 2000px;
+    opacity: 1;
+    overflow: hidden;
 }
 
 .salon-info-details {
@@ -855,7 +868,6 @@ body.modal-open {
 @media (max-width: 768px) {
     .management-sections {
         grid-template-columns: 1fr;
-        padding: 0.5rem;
     }
     
     .section {
@@ -982,6 +994,18 @@ body.modal-open {
 
 .salon-panel {
     position: relative;
+    transition: all 0.3s ease;
+}
+
+.salon-panel.minimized {
+    padding-bottom: 1rem;
+}
+
+.salon-panel.minimized .management-sections {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
+    margin: 0;
 }
 
 .minimize-btn {
@@ -997,6 +1021,7 @@ body.modal-open {
     width: auto !important;
     padding: 0.5rem !important;
     margin: 0 !important;
+    transition: transform 0.3s ease;
 }
 
 .minimize-btn:hover {
@@ -1006,13 +1031,12 @@ body.modal-open {
     box-shadow: none !important;
 }
 
-.salon-panel.minimized .management-sections {
-    display: none;
+.salon-panel h2 {
+    transition: margin-bottom 0.3s ease;
 }
 
 .salon-panel.minimized h2 {
     margin-bottom: 0;
-    padding-bottom: 1rem;
 }
 
 /* Estilos para el carrusel */
@@ -1393,4 +1417,430 @@ body.modal-open {
     color: inherit;
     font-size: 1rem;
     margin-left: auto;
+}
+
+/* Estilos para el buscador */
+.search-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 0.5rem;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 1000;
+    display: none;
+}
+
+.search-results.active {
+    display: block;
+}
+
+.search-result-item {
+    padding: 0.8rem 1rem;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-result-item:hover {
+    background-color: var(--background-color);
+}
+
+.search-result-info {
+    width: 100%;
+}
+
+.search-result-info h4 {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.search-result-info p {
+    margin: 0.3rem 0 0 0;
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.no-results {
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+}
+
+/* Botones de la página del salón */
+.salon-action-button {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    margin: 0.5rem 0;
+}
+
+.salon-action-button:hover {
+    background-color: #357ABD;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.salon-action-button i {
+    font-size: 1.1rem;
+}
+
+.salon-action-button.select-service {
+    background-color: var(--secondary-color);
+}
+
+.salon-action-button.select-service:hover {
+    background-color: #34495e;
+}
+
+.salon-action-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Estilos para la página del salón */
+.salon-details {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+}
+
+.salon-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 3rem 2rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.salon-info {
+    text-align: center;
+}
+
+.salon-info h1 {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+}
+
+.salon-basic-info {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin: 1.5rem 0;
+    flex-wrap: wrap;
+}
+
+.salon-basic-info p {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.salon-basic-info i {
+    font-size: 1.2rem;
+}
+
+.salon-content {
+    display: grid;
+    gap: 2rem;
+}
+
+.salon-description {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.salon-description h2 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.salon-description p {
+    color: #666;
+    line-height: 1.6;
+}
+
+.salon-services {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.salon-services h2 {
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.service-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.service-card h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.service-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.price {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--primary-color);
+}
+
+.duration {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.salon-schedule {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.salon-schedule h2 {
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+}
+
+.schedule-day {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.schedule-day strong {
+    color: var(--secondary-color);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.booking-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.booking-section h2 {
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.booking-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.booking-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.booking-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.booking-form input,
+.booking-form select {
+    width: 100%;
+    padding: 0.8rem;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.booking-form input:focus,
+.booking-form select:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.time-slot {
+    padding: 0.8rem;
+    text-align: center;
+    background: #f8f9fa;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.time-slot:hover:not(.disabled) {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.time-slot.selected {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.time-slot.disabled {
+    background: #eee;
+    color: #999;
+    cursor: not-allowed;
+}
+
+.reviews-section {
+    background: white;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+.reviews-section h2 {
+    color: var(--secondary-color);
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
+    text-align: center;
+}
+
+.reviews-list {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.review-card {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.review-card:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.review-header strong {
+    color: var(--secondary-color);
+}
+
+.review-card p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.review-card small {
+    color: #999;
+}
+
+@media (max-width: 768px) {
+    .salon-header {
+        padding: 2rem 1rem;
+    }
+
+    .salon-info h1 {
+        font-size: 2rem;
+    }
+
+    .salon-basic-info {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .schedule-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Estilos para el panel de peluquería */
+.salon-panel .close-btn,
+.salon-panel .section .close-btn,
+.salon-panel .booking-item .close-btn,
+.salon-panel .service-item .close-btn {
+    display: none;
 } 

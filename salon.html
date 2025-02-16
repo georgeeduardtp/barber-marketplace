@@ -18,11 +18,27 @@
     <header>
         <nav>
             <div class="logo">
-                <a href="index.html">MarketPlace Peluquerías</a>
+                <a href="index.html">Barber Place</a>
             </div>
             <div class="auth-buttons">
                 <button id="loginBtn">Iniciar Sesión</button>
                 <button id="registerBtn">Registrarse</button>
+            </div>
+            <!-- Nuevo menú de usuario (inicialmente oculto) -->
+            <div class="user-menu" style="display: none;">
+                <div class="user-info">
+                    <div class="user-avatar">U</div>
+                    <div class="user-details">
+                        <span class="user-name">Usuario</span>
+                        <span class="user-role">Rol</span>
+                    </div>
+                </div>
+                <div class="dropdown-content">
+                    <div class="dropdown-content-inner">
+                        <button id="settingsBtn">Configuración</button>
+                        <button id="logoutBtn">Cerrar Sesión</button>
+                    </div>
+                </div>
             </div>
         </nav>
     </header>
@@ -33,9 +49,9 @@
                 <div class="salon-info">
                     <h1 id="salonName">Cargando...</h1>
                     <div class="salon-basic-info">
-                        <p id="salonAddress"><i class="icon-location"></i> Cargando dirección...</p>
-                        <p id="salonLocation"><i class="icon-map"></i> Cargando ubicación...</p>
-                        <p id="salonPhone"><i class="icon-phone"></i> Cargando teléfono...</p>
+                        <p id="salonAddress"><i class="fas fa-map-marker-alt"></i> Cargando dirección...</p>
+                        <p id="salonLocation"><i class="fas fa-map"></i> Cargando ubicación...</p>
+                        <p id="salonPhone"><i class="fas fa-phone-alt"></i> Cargando teléfono...</p>
                     </div>
                     <div class="rating" id="salonRating">
                         <!-- Las estrellas se cargarán dinámicamente -->
@@ -62,62 +78,65 @@
                 </div>
 
                 <div class="salon-description">
-                    <h2>Sobre Nosotros</h2>
+                    <h2><i class="fas fa-info-circle"></i> Sobre Nosotros</h2>
                     <p id="salonDescription">Cargando descripción...</p>
                 </div>
 
                 <div class="salon-services">
-                    <h2>Nuestros Servicios</h2>
+                    <h2><i class="fas fa-cut"></i> Nuestros Servicios</h2>
                     <div class="services-grid" id="servicesList">
                         <!-- Los servicios se cargarán dinámicamente -->
                     </div>
                 </div>
 
                 <div class="salon-schedule">
-                    <h2>Horarios de Apertura</h2>
+                    <h2><i class="fas fa-clock"></i> Horarios de Apertura</h2>
                     <div class="schedule-grid" id="scheduleList">
                         <!-- Los horarios se cargarán dinámicamente -->
                     </div>
                 </div>
 
                 <div class="booking-section">
-                    <h2>Reservar Cita</h2>
+                    <h2><i class="fas fa-calendar-alt"></i> Reservar Cita</h2>
                     <form id="bookingForm" class="booking-form">
                         <div class="form-group">
-                            <label for="serviceSelect">Selecciona el Servicio</label>
+                            <label for="serviceSelect"><i class="fas fa-cut"></i> Selecciona el Servicio</label>
                             <select id="serviceSelect" required>
                                 <option value="">Elige un servicio</option>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="dateSelect">Selecciona el Día</label>
+                            <label for="dateSelect"><i class="fas fa-calendar"></i> Selecciona el Día</label>
                             <input type="date" id="dateSelect" required>
                         </div>
                         <div class="form-group">
-                            <label for="timeSlots">Selecciona la Hora</label>
+                            <label for="timeSlots"><i class="fas fa-clock"></i> Selecciona la Hora</label>
                             <div id="timeSlots" class="time-slots">
                                 <!-- Las horas se cargarán dinámicamente -->
                             </div>
                             <input type="hidden" id="selectedTime" required>
                         </div>
                         <div class="form-group">
-                            <label for="clientName">Nombre Completo</label>
+                            <label for="clientName"><i class="fas fa-user"></i> Nombre Completo</label>
                             <input type="text" id="clientName" required>
                         </div>
                         <div class="form-group">
-                            <label for="clientEmail">Correo Electrónico</label>
+                            <label for="clientEmail"><i class="fas fa-envelope"></i> Correo Electrónico</label>
                             <input type="email" id="clientEmail" required>
                         </div>
                         <div class="form-group">
-                            <label for="clientPhone">Teléfono</label>
+                            <label for="clientPhone"><i class="fas fa-phone"></i> Teléfono</label>
                             <input type="tel" id="clientPhone" required>
                         </div>
-                        <button type="submit" class="primary-button">Confirmar Reserva</button>
+                        <button type="submit" class="salon-action-button">
+                            <i class="fas fa-check-circle"></i>
+                            Confirmar Reserva
+                        </button>
                     </form>
                 </div>
 
                 <div class="reviews-section">
-                    <h2>Reseñas de Clientes</h2>
+                    <h2><i class="fas fa-star"></i> Reseñas de Clientes</h2>
                     <div class="reviews-list" id="reviewsList">
                         <!-- Las reseñas se cargarán dinámicamente -->
                     </div>

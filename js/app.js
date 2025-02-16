@@ -110,4 +110,89 @@ searchInput.addEventListener('keypress', (e) => {
 // Cargar datos iniciales
 document.addEventListener('DOMContentLoaded', () => {
     loadFeaturedSalons();
+});
+
+// Función para buscar peluquerías
+async function searchSalons() {
+    const searchInput = document.getElementById('searchInput');
+    const searchResults = document.getElementById('searchResults');
+    const query = searchInput.value.trim().toLowerCase();
+
+    if (query.length < 2) {
+        searchResults.classList.remove('active');
+        return;
+    }
+
+    try {
+        const snapshot = await db.collection('peluquerias').get();
+        const results = [];
+
+        snapshot.forEach(doc => {
+            const salon = doc.data();
+            if (salon.nombre.toLowerCase().includes(query) || 
+                salon.ciudad.toLowerCase().includes(query) ||
+                salon.direccion.toLowerCase().includes(query)) {
+                results.push({
+                    id: doc.id,
+                    ...salon
+                });
+            }
+        });
+
+        if (results.length > 0) {
+            let html = '';
+            results.forEach(salon => {
+                html += `
+                    <div class="search-result-item" onclick="window.location.href='salon.html?id=${salon.id}'">
+                        <div class="search-result-info">
+                            <h4>${salon.nombre}</h4>
+                            <p>${salon.direccion}, ${salon.ciudad}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            searchResults.innerHTML = html;
+        } else {
+            searchResults.innerHTML = '<div class="no-results">No se encontraron peluquerías</div>';
+        }
+        
+        searchResults.classList.add('active');
+    } catch (error) {
+        console.error('Error al buscar peluquerías:', error);
+        searchResults.innerHTML = '<div class="no-results">Error al realizar la búsqueda</div>';
+        searchResults.classList.add('active');
+    }
+}
+
+// Event listener para el input de búsqueda
+document.getElementById('searchInput').addEventListener('input', debounce(searchSalons, 300));
+
+// Event listener para cerrar los resultados cuando se hace clic fuera
+document.addEventListener('click', (e) => {
+    const searchResults = document.getElementById('searchResults');
+    const searchBar = document.querySelector('.search-bar');
+    
+    if (!searchBar.contains(e.target)) {
+        searchResults.classList.remove('active');
+    }
+});
+
+// Función debounce para evitar muchas llamadas seguidas
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Event listener para la tecla Enter en el buscador
+document.getElementById('searchInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        searchSalons();
+    }
 }); 

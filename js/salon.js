@@ -154,8 +154,9 @@ function loadServices(servicios) {
                 <span class="price">€${servicio.precio}</span>
                 <span class="duration">${servicio.duracion} min</span>
             </div>
-            <button onclick="selectService('${servicio.id}')" class="book-service-btn">
-                Reservar
+            <button onclick="selectService('${servicio.id}')" class="salon-action-button select-service">
+                <i class="fas fa-calendar-check"></i>
+                Seleccionar Servicio
             </button>
         </div>
     `).join('');

@@ -19,10 +19,13 @@
 <body>
     <header>
         <nav>
-            <div class="logo">MarketPlace Peluquerías</div>
+            <div class="logo">
+                <a href="index.html">Barber Place</a>
+            </div>
             <div class="search-bar">
-                <input type="text" placeholder="Buscar peluquerías...">
-                <button>Buscar</button>
+                <input type="text" id="searchInput" placeholder="Buscar peluquerías..." autocomplete="off">
+                <button onclick="searchSalons()">Buscar</button>
+                <div id="searchResults" class="search-results"></div>
             </div>
             <div class="auth-buttons">
                 <button id="loginBtn">Iniciar Sesión</button>
