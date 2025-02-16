@@ -214,10 +214,16 @@ async function loadSalonAccounts() {
                         `<p>Perfil completado</p>` : 
                         '<p>Perfil no completado</p>'
                     }
-                    <button onclick="deleteSalonAndUser('${userId}', '${peluqueriaId || ''}')" 
-                            class="delete-btn" style="background-color: #e74c3c; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; margin-top: 10px;">
-                        Eliminar Peluquería
-                    </button>
+                    <div class="salon-actions">
+                        <button onclick="showImageManager('${peluqueriaId}')" 
+                                class="manage-images-btn" style="background-color: var(--primary-color); color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; margin-top: 10px; margin-right: 10px;">
+                            <i class="fas fa-images"></i> Gestionar Imágenes
+                        </button>
+                        <button onclick="deleteSalonAndUser('${userId}', '${peluqueriaId || ''}')" 
+                                class="delete-btn" style="background-color: #e74c3c; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; margin-top: 10px;">
+                            <i class="fas fa-trash"></i> Eliminar Peluquería
+                        </button>
+                    </div>
                 </div>
             `;
         }
@@ -1467,5 +1473,179 @@ async function cancelarReservaModal(reservaId, salonId) {
             console.error('Error al cancelar reserva:', error);
             showErrorMessage('Error al cancelar la reserva');
         }
+    }
+}
+
+// Variable global para almacenar los cambios temporales
+let tempImages = [];
+
+async function showImageManager(peluqueriaId) {
+    const existingModal = document.getElementById('imageManagerModal');
+    if (existingModal) existingModal.remove();
+
+    const modalHTML = `
+        <div id="imageManagerModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Gestionar Imágenes</h2>
+                <div class="image-upload-section">
+                    <label for="adminImageUpload" class="upload-btn">
+                        <i class="fas fa-cloud-upload-alt"></i> Seleccionar Imagen
+                    </label>
+                    <input type="file" id="adminImageUpload" accept="image/*" style="display: none;">
+                    <p class="upload-info">Máximo 1MB. Formatos: JPG, PNG</p>
+                </div>
+                <div id="currentImages" class="current-images-grid"></div>
+                <div class="modal-actions">
+                    <button onclick="closeImageManager('${peluqueriaId}')" class="cancel-action-btn">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                    <button onclick="saveImageChanges('${peluqueriaId}')" class="confirm-action-btn">
+                        <i class="fas fa-save"></i> Guardar Cambios
+                    </button>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+    const modal = document.getElementById('imageManagerModal');
+    const closeBtn = modal.querySelector('.close');
+    const imageInput = document.getElementById('adminImageUpload');
+    const currentImagesDiv = document.getElementById('currentImages');
+
+    try {
+        // Cargar imágenes actuales
+        const peluqueriaDoc = await db.collection('peluquerias').doc(peluqueriaId).get();
+        const peluqueriaData = peluqueriaDoc.data();
+        // Inicializar tempImages con las imágenes actuales
+        tempImages = [...(peluqueriaData.fotos || [])];
+
+        // Función para actualizar la vista de imágenes
+        function updateImagesView() {
+            currentImagesDiv.innerHTML = '';
+            tempImages.forEach((base64Image, index) => {
+                const imgContainer = document.createElement('div');
+                imgContainer.className = 'image-container';
+                imgContainer.innerHTML = `
+                    <img src="${base64Image}" alt="Imagen ${index + 1}">
+                    <button onclick="removeTempImage(${index})" class="delete-image-btn">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                `;
+                currentImagesDiv.appendChild(imgContainer);
+            });
+        }
+
+        // Mostrar imágenes iniciales
+        updateImagesView();
+
+        // Manejar subida de nuevas imágenes
+        imageInput.onchange = async (event) => {
+            const file = event.target.files[0];
+            if (file) {
+                try {
+                    const base64String = await convertImageToBase64(file);
+                    tempImages.push(base64String);
+                    updateImagesView();
+                } catch (error) {
+                    alert('Error al subir la imagen: ' + error.message);
+                }
+            }
+        };
+
+        // Mostrar modal
+        modal.style.display = "block";
+
+        // Cerrar modal
+        closeBtn.onclick = () => {
+            closeImageManager(peluqueriaId);
+        };
+
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                closeImageManager(peluqueriaId);
+            }
+        };
+    } catch (error) {
+        console.error('Error al cargar las imágenes:', error);
+        alert('Error al cargar las imágenes: ' + error.message);
+        modal.remove();
+    }
+}
+
+// Función para eliminar imagen temporal
+function removeTempImage(index) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta imagen?')) {
+        tempImages.splice(index, 1);
+        const currentImagesDiv = document.getElementById('currentImages');
+        currentImagesDiv.innerHTML = '';
+        tempImages.forEach((base64Image, idx) => {
+            const imgContainer = document.createElement('div');
+            imgContainer.className = 'image-container';
+            imgContainer.innerHTML = `
+                <img src="${base64Image}" alt="Imagen ${idx + 1}">
+                <button onclick="removeTempImage(${idx})" class="delete-image-btn">
+                    <i class="fas fa-trash"></i>
+                </button>
+            `;
+            currentImagesDiv.appendChild(imgContainer);
+        });
+    }
+}
+
+// Función para verificar si hay cambios sin guardar
+async function hasUnsavedChanges(peluqueriaId) {
+    try {
+        const peluqueriaDoc = await db.collection('peluquerias').doc(peluqueriaId).get();
+        const currentImages = peluqueriaDoc.data()?.fotos || [];
+        return JSON.stringify(currentImages) !== JSON.stringify(tempImages);
+    } catch (error) {
+        console.error('Error al verificar cambios:', error);
+        return false;
+    }
+}
+
+function closeImageManager(peluqueriaId) {
+    const modal = document.getElementById('imageManagerModal');
+    if (!modal) return;
+
+    if (tempImages.length > 0) {
+        if (confirm('Hay cambios sin guardar. ¿Estás seguro de que deseas cerrar?')) {
+            modal.remove();
+            tempImages = []; // Limpiar imágenes temporales
+        }
+    } else {
+        modal.remove();
+    }
+}
+
+async function saveImageChanges(peluqueriaId) {
+    try {
+        const modal = document.getElementById('imageManagerModal');
+        const confirmBtn = modal.querySelector('.confirm-action-btn');
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+        // Guardar los cambios en Firestore
+        await db.collection('peluquerias').doc(peluqueriaId).update({
+            fotos: tempImages
+        });
+
+        showSuccessMessage('Cambios guardados exitosamente');
+        modal.remove();
+        tempImages = []; // Limpiar imágenes temporales
+        
+        // Esperar 1 segundo para que el usuario vea el mensaje de éxito
+        setTimeout(() => {
+            window.location.reload();
+        }, 1000);
+    } catch (error) {
+        console.error('Error al guardar los cambios:', error);
+        showErrorMessage('Error al guardar los cambios');
+        const confirmBtn = modal.querySelector('.confirm-action-btn');
+        confirmBtn.disabled = false;
+        confirmBtn.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
     }
 } 

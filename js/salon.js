@@ -76,10 +76,68 @@ async function loadSalonDetails() {
     }
 }
 
+// Función para manejar la subida de imágenes
+async function handleImageUpload(event) {
+    try {
+        // Verificar si el usuario es administrador
+        const user = auth.currentUser;
+        if (!user) {
+            alert('Debes iniciar sesión como administrador para subir imágenes');
+            return;
+        }
+
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        
+        if (!userData || userData.role !== 'admin') {
+            alert('Solo los administradores pueden subir imágenes');
+            return;
+        }
+
+        const file = event.target.files[0];
+        const base64Image = await convertImageToBase64(file);
+        
+        // Obtener las fotos actuales
+        const salonDoc = await db.collection('peluquerias').doc(salonId).get();
+        const salonData = salonDoc.data();
+        const fotosActuales = salonData.fotos || [];
+        
+        // Agregar la nueva foto
+        await db.collection('peluquerias').doc(salonId).update({
+            fotos: [...fotosActuales, base64Image]
+        });
+        
+        // Recargar las imágenes
+        loadImages([...fotosActuales, base64Image]);
+        
+        alert('Imagen subida exitosamente');
+    } catch (error) {
+        console.error('Error al subir la imagen:', error);
+        alert(error.toString());
+    }
+}
+
 // Cargar imágenes de la peluquería
-function loadImages(fotos) {
+async function loadImages(fotos) {
     const carouselTrack = document.querySelector('.carousel-track');
     const carouselThumbnails = document.querySelector('.carousel-thumbnails');
+    const imageUploadContainer = document.querySelector('.image-upload-container');
+    
+    // Verificar si el usuario es administrador
+    const user = auth.currentUser;
+    if (user) {
+        const userDoc = await db.collection('users').doc(user.uid).get();
+        const userData = userDoc.data();
+        
+        // Mostrar u ocultar el contenedor de subida según el rol
+        if (userData && userData.role === 'admin') {
+            imageUploadContainer.style.display = 'block';
+        } else {
+            imageUploadContainer.style.display = 'none';
+        }
+    } else {
+        imageUploadContainer.style.display = 'none';
+    }
     
     if (fotos.length === 0) {
         fotos = [

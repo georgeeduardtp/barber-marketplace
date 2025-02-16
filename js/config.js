@@ -39,6 +39,33 @@ db.settings({
     merge: true
 });
 
+// Función para convertir imagen a Base64
+function convertImageToBase64(file) {
+    return new Promise((resolve, reject) => {
+        if (!file) {
+            reject('No se proporcionó ningún archivo');
+            return;
+        }
+
+        // Verificar que sea una imagen
+        if (!file.type.match('image.*')) {
+            reject('El archivo seleccionado no es una imagen');
+            return;
+        }
+
+        // Verificar tamaño (máximo 1MB)
+        if (file.size > 1024 * 1024) {
+            reject('La imagen es demasiado grande. El tamaño máximo es 1MB');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.onerror = (e) => reject('Error al leer el archivo');
+        reader.readAsDataURL(file);
+    });
+}
+
 // Verificar estado de autenticación
 auth.onAuthStateChanged((user) => {
     if (user) {

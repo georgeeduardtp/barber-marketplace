@@ -81,6 +81,13 @@
                     <div class="carousel-thumbnails">
                         <!-- Las miniaturas se cargarán dinámicamente -->
                     </div>
+                    <div class="image-upload-container">
+                        <label for="imageUpload" class="upload-button">
+                            <i class="fas fa-upload"></i> Subir Imagen
+                        </label>
+                        <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+                        <p class="upload-info">Tamaño máximo: 1MB. Formatos: JPG, PNG</p>
+                    </div>
                 </div>
 
                 <div class="salon-description">
