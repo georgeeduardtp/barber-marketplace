@@ -578,8 +578,6 @@ function showSalonRegistrationForm(userId, businessName) {
                             fin: endInput.value || '',
                             cerrado: false
                         };
-                } else {
-                    peluqueriaData.horarios[day] = { cerrado: true };
                 }
             });
 
@@ -681,6 +679,9 @@ function showSalonManagementPanel(salonData, salonId) {
                     <div id="reservasList" class="bookings-list">
                         Cargando reservas...
                     </div>
+                    <button onclick="showFullReservasPanel('${salonId}')" class="secondary-button" style="width: 100%; margin-top: 1rem;">
+                        <i class="fas fa-expand"></i> Ver todo
+                    </button>
                 </div>
                 <div class="section">
                     <button class="close-btn" onclick="this.parentElement.style.display='none'"><i class="fas fa-times"></i></button>
@@ -750,45 +751,22 @@ async function cargarReservas(salonId, pagina = 1) {
 
         let reservas = [];
 
-        try {
-            // Intentar primero con la consulta completa
-            let query = db.collection('reservas')
-                .where('peluqueriaId', '==', salonId);
+        // Usar consulta simple y filtrar manualmente
+        const snapshot = await db.collection('reservas')
+            .where('peluqueriaId', '==', salonId)
+            .get();
 
-            // Aplicar filtros solo si no son los valores por defecto
-            if (filtroEstado !== 'todas') {
-                query = query.where('estado', '==', filtroEstado);
-            }
+        snapshot.forEach(doc => {
+            const reserva = doc.data();
+            const fechaReserva = reserva.fecha.toDate();
             
-            if (filtroFecha) {
-                query = query.where('fecha', '>=', startDate)
-                           .where('fecha', '<=', endDate);
-            }
-
-            const snapshot = await query.get();
-            snapshot.forEach(doc => {
-                reservas.push({ ...doc.data(), id: doc.id });
-            });
-
-        } catch (indexError) {
-            console.log('Error de índice, usando consulta alternativa:', indexError);
-            
-            // Si falla por el índice, hacer una consulta más simple
-            const snapshot = await db.collection('reservas')
-                .where('peluqueriaId', '==', salonId)
-                .get();
-
-            snapshot.forEach(doc => {
-                const reserva = doc.data();
-                const fechaReserva = reserva.fecha.toDate();
-                
-                // Filtrar manualmente por fecha y estado
-                if ((!filtroFecha || (fechaReserva >= startDate && fechaReserva <= endDate)) && 
-                    (filtroEstado === 'todas' || reserva.estado === filtroEstado)) {
+            // Filtrar manualmente por fecha y estado
+            if (fechaReserva >= startDate && fechaReserva <= endDate) {
+                if (filtroEstado === 'todas' || reserva.estado === filtroEstado) {
                     reservas.push({ ...reserva, id: doc.id });
                 }
-            });
-        }
+            }
+        });
 
         // Ordenar por fecha (de más próxima a más lejana)
         reservas.sort((a, b) => {
@@ -796,7 +774,6 @@ async function cargarReservas(salonId, pagina = 1) {
             const fechaB = b.fecha.toDate();
             // Comparar con la fecha actual para ordenar primero las más próximas
             const ahora = new Date();
-            // Si la fecha ya pasó, ponerla al final
             if (fechaA < ahora && fechaB < ahora) {
                 return fechaB - fechaA; // Las fechas pasadas se ordenan de más reciente a más antigua
             } else if (fechaA < ahora) {
@@ -824,7 +801,6 @@ async function cargarReservas(salonId, pagina = 1) {
                 const fecha = reserva.fecha.toDate();
                 html += `
                     <div class="booking-item ${reserva.estado}">
-                        <button class="close-btn" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                         <div class="booking-info">
                             <p><strong>Cliente:</strong> ${reserva.nombre}</p>
                             <p><strong>Teléfono:</strong> ${reserva.telefono}</p>
@@ -1166,4 +1142,295 @@ function addNewService() {
         </div>
     `;
     document.getElementById('currentServices').insertAdjacentHTML('beforeend', newServiceHtml);
+}
+
+// Añadir esta nueva función para mostrar el panel completo de reservas
+function showFullReservasPanel(salonId) {
+    const modal = `
+        <div class="modal" id="fullReservasModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <i class="fas fa-calendar-check"></i>
+                    <h2>Gestión de Reservas</h2>
+                    <button class="close-modal" onclick="closeFullReservasModal('${salonId}')">×</button>
+                </div>
+                <div class="reservas-full-panel">
+                    <div class="reservas-stats">
+                        <div class="stat-card">
+                            <i class="fas fa-clock"></i>
+                            <span class="stat-label">Pendientes</span>
+                            <span class="stat-value" id="modalPendientesCount">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i>
+                            <span class="stat-label">Confirmadas</span>
+                            <span class="stat-value" id="modalCompletadasCount">0</span>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-times-circle"></i>
+                            <span class="stat-label">Canceladas</span>
+                            <span class="stat-value" id="modalCanceladasCount">0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="filtros-container">
+                        <div class="reservas-filtros">
+                            <select id="modalFiltroEstado" onchange="filtrarReservasModal('${salonId}')">
+                                <option value="todas">Todas las reservas</option>
+                                <option value="pendiente">Pendientes</option>
+                                <option value="confirmada">Confirmadas</option>
+                                <option value="cancelada">Canceladas</option>
+                            </select>
+                            <input type="date" id="modalFiltroFecha" onchange="filtrarReservasModal('${salonId}')">
+                            <button onclick="resetFiltrosModal('${salonId}')" class="reset-btn">
+                                <i class="fas fa-sync-alt"></i> Resetear Filtros
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="reservas-grid">
+                        <div id="modalReservasList" class="reservas-list">
+                            <!-- Las reservas se cargarán aquí -->
+                        </div>
+                        
+                        <div class="reservas-navegacion">
+                            <button onclick="cambiarPaginaReservasModal(-1, '${salonId}')" class="nav-btn" id="modalPrevPage">
+                                <i class="fas fa-chevron-left"></i> Anterior
+                            </button>
+                            <span id="modalPaginaActual">Página 1</span>
+                            <button onclick="cambiarPaginaReservasModal(1, '${salonId}')" class="nav-btn" id="modalNextPage">
+                                <i class="fas fa-chevron-right"></i> Siguiente
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+    document.body.insertAdjacentHTML('beforeend', modal);
+    document.body.classList.add('modal-open');
+
+    // Inicializar fecha del filtro con la fecha actual
+    const filtroFecha = document.getElementById('modalFiltroFecha');
+    const today = new Date().toISOString().split('T')[0];
+    filtroFecha.value = today;
+
+    // Cargar datos iniciales
+    cargarReservasModal(salonId);
+    actualizarEstadisticas(salonId);
+}
+
+function closeFullReservasModal(salonId) {
+    document.getElementById('fullReservasModal').remove();
+    document.body.classList.remove('modal-open');
+    // Recargar las reservas en el panel principal
+    cargarReservas(salonId);
+}
+
+// Variables para el modal
+let modalPaginaActual = 1;
+const modalReservasPorPagina = 10;
+let modalTotalReservas = 0;
+
+async function cargarReservasModal(salonId) {
+    const reservasList = document.getElementById('modalReservasList');
+    const filtroEstado = document.getElementById('modalFiltroEstado').value;
+    const filtroFecha = document.getElementById('modalFiltroFecha').value;
+
+    try {
+        reservasList.innerHTML = '<div class="loading">Cargando reservas...</div>';
+
+        // Crear fechas para el inicio y fin del día seleccionado
+        const startDate = new Date(filtroFecha);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(filtroFecha);
+        endDate.setHours(23, 59, 59, 999);
+
+        let reservas = [];
+        
+        // Simplificar la consulta para evitar el error de índice
+        const snapshot = await db.collection('reservas')
+            .where('peluqueriaId', '==', salonId)
+            .get();
+
+        snapshot.forEach(doc => {
+            const reserva = doc.data();
+            const fechaReserva = reserva.fecha.toDate();
+            
+            // Filtrar manualmente por fecha y estado
+            if (fechaReserva >= startDate && fechaReserva <= endDate) {
+                if (filtroEstado === 'todas' || reserva.estado === filtroEstado) {
+                    reservas.push({ ...reserva, id: doc.id });
+                }
+            }
+        });
+
+        // Ordenar por fecha
+        reservas.sort((a, b) => {
+            const fechaA = a.fecha.toDate();
+            const fechaB = b.fecha.toDate();
+            return fechaA - fechaB;
+        });
+
+        modalTotalReservas = reservas.length;
+        const totalPaginas = Math.ceil(modalTotalReservas / modalReservasPorPagina);
+        modalPaginaActual = Math.min(modalPaginaActual, totalPaginas);
+
+        // Calcular índices para la paginación
+        const inicio = (modalPaginaActual - 1) * modalReservasPorPagina;
+        const fin = inicio + modalReservasPorPagina;
+        const reservasPaginadas = reservas.slice(inicio, fin);
+
+        let html = '';
+        if (reservasPaginadas.length === 0) {
+            html = '<p class="text-center">No hay reservas para este día</p>';
+        } else {
+            reservasPaginadas.forEach(reserva => {
+                const fecha = reserva.fecha.toDate();
+                html += `
+                    <div class="booking-item ${reserva.estado}">
+                        <div class="booking-info">
+                            <p><strong>Cliente:</strong> ${reserva.nombre}</p>
+                            <p><strong>Teléfono:</strong> ${reserva.telefono}</p>
+                            <p><strong>Email:</strong> ${reserva.email}</p>
+                            <p><strong>Fecha:</strong> ${fecha.toLocaleDateString()}</p>
+                            <p><strong>Hora:</strong> ${fecha.toLocaleTimeString()}</p>
+                            <p><strong>Servicio:</strong> ${reserva.servicio.nombre} (${reserva.servicio.duracion} min - €${reserva.servicio.precio})</p>
+                            <p><strong>Estado:</strong> <span class="estado-${reserva.estado}">${reserva.estado}</span></p>
+                        </div>
+                        <div class="booking-actions">
+                            ${reserva.estado === 'pendiente' ? `
+                                <button onclick="completarReservaModal('${reserva.id}', '${salonId}')" class="confirm-btn">
+                                    <i class="fas fa-check"></i> Completar
+                                </button>
+                                <button onclick="cancelarReservaModal('${reserva.id}', '${salonId}')" class="cancel-btn">
+                                    <i class="fas fa-times"></i> Cancelar
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        reservasList.innerHTML = html;
+
+        // Actualizar navegación
+        document.getElementById('modalPaginaActual').textContent = `Página ${modalPaginaActual} de ${totalPaginas}`;
+        document.getElementById('modalPrevPage').disabled = modalPaginaActual === 1;
+        document.getElementById('modalNextPage').disabled = modalPaginaActual === totalPaginas || totalPaginas === 0;
+
+        // Actualizar estadísticas para el día seleccionado
+        actualizarEstadisticas(salonId);
+
+    } catch (error) {
+        console.error('Error al cargar reservas:', error);
+        reservasList.innerHTML = '<p class="text-center">Error al cargar las reservas</p>';
+    }
+}
+
+async function actualizarEstadisticas(salonId) {
+    try {
+        const filtroFecha = document.getElementById('modalFiltroFecha').value;
+        
+        // Si no hay fecha seleccionada, usar la fecha actual
+        const fecha = filtroFecha ? new Date(filtroFecha) : new Date();
+        
+        // Crear fechas para el inicio y fin del día
+        const startDate = new Date(fecha);
+        startDate.setHours(0, 0, 0, 0);
+        const endDate = new Date(fecha);
+        endDate.setHours(23, 59, 59, 999);
+
+        // Obtener las reservas del día
+        const snapshot = await db.collection('reservas')
+            .where('peluqueriaId', '==', salonId)
+            .get();
+
+        let pendientes = 0;
+        let completadas = 0;
+        let canceladas = 0;
+
+        snapshot.forEach(doc => {
+            const reserva = doc.data();
+            const fechaReserva = reserva.fecha.toDate();
+            
+            // Filtrar manualmente por fecha
+            if (fechaReserva >= startDate && fechaReserva <= endDate) {
+                switch (reserva.estado) {
+                    case 'pendiente':
+                        pendientes++;
+                        break;
+                    case 'confirmada':
+                        completadas++;
+                        break;
+                    case 'cancelada':
+                        canceladas++;
+                        break;
+                }
+            }
+        });
+
+        // Actualizar los contadores en el modal
+        document.getElementById('modalPendientesCount').textContent = pendientes;
+        document.getElementById('modalCompletadasCount').textContent = completadas;
+        document.getElementById('modalCanceladasCount').textContent = canceladas;
+    } catch (error) {
+        console.error('Error al actualizar estadísticas:', error);
+    }
+}
+
+function filtrarReservasModal(salonId) {
+    modalPaginaActual = 1;
+    cargarReservasModal(salonId);
+}
+
+function resetFiltrosModal(salonId) {
+    document.getElementById('modalFiltroEstado').value = 'todas';
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById('modalFiltroFecha').value = today;
+    filtrarReservasModal(salonId);
+}
+
+function cambiarPaginaReservasModal(direccion, salonId) {
+    const nuevaPagina = modalPaginaActual + direccion;
+    const totalPaginas = Math.ceil(modalTotalReservas / modalReservasPorPagina);
+    
+    if (nuevaPagina >= 1 && nuevaPagina <= totalPaginas) {
+        modalPaginaActual = nuevaPagina;
+        cargarReservasModal(salonId);
+    }
+}
+
+async function confirmarReservaModal(reservaId, salonId) {
+    try {
+        await db.collection('reservas').doc(reservaId).update({
+            estado: 'confirmada'
+        });
+        
+        await cargarReservasModal(salonId);
+        await actualizarEstadisticas(salonId);
+        showSuccessMessage('Reserva confirmada exitosamente');
+    } catch (error) {
+        console.error('Error al confirmar reserva:', error);
+        showErrorMessage('Error al confirmar la reserva');
+    }
+}
+
+async function cancelarReservaModal(reservaId, salonId) {
+    if (confirm('¿Estás seguro de que deseas cancelar esta reserva?')) {
+        try {
+            await db.collection('reservas').doc(reservaId).update({
+                estado: 'cancelada'
+            });
+            
+            await cargarReservasModal(salonId);
+            await actualizarEstadisticas(salonId);
+            showSuccessMessage('Reserva cancelada exitosamente');
+        } catch (error) {
+            console.error('Error al cancelar reserva:', error);
+            showErrorMessage('Error al cancelar la reserva');
+        }
+    }
 } 
