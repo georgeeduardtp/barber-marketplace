@@ -1049,4 +1049,121 @@ async function cancelarReserva(reservaId) {
             alert('Error al cancelar la reserva');
         }
     }
+}
+
+// Función para editar servicios
+async function editServices(salonId) {
+    try {
+        // Obtener los servicios actuales
+        const salonDoc = await db.collection('peluquerias').doc(salonId).get();
+        const salonData = salonDoc.data();
+        const servicios = salonData.servicios || [];
+
+        const modal = `
+            <div class="modal" id="editServicesModal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <i class="fas fa-cut"></i>
+                        <h2>Gestionar Servicios</h2>
+                        <button class="close-modal" onclick="closeServicesModal()">×</button>
+                    </div>
+                    <form id="editServicesForm" class="salon-registration-form">
+                        <div class="form-group">
+                            <h3>Servicios Actuales</h3>
+                            <div id="currentServices">
+                                ${servicios.map(servicio => `
+                                    <div class="service-input" data-id="${servicio.id}">
+                                        <input type="text" class="service-name" value="${servicio.nombre}" placeholder="Nombre del servicio" required>
+                                        <input type="number" class="service-price" value="${servicio.precio}" placeholder="Precio €" required>
+                                        <input type="number" class="service-duration" value="${servicio.duracion}" placeholder="Duración (min)" required>
+                                        <button type="button" onclick="this.parentElement.remove()" class="delete-service-btn">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <button type="button" onclick="addNewService()" class="secondary-button">
+                                <i class="fas fa-plus"></i> Agregar Nuevo Servicio
+                            </button>
+                        </div>
+                        <button type="submit" class="submit-button">
+                            <i class="fas fa-save"></i> Guardar Cambios
+                        </button>
+                    </form>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modal);
+        document.body.classList.add('modal-open');
+
+        // Event listener para el formulario
+        document.getElementById('editServicesForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const submitButton = e.target.querySelector('button[type="submit"]');
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+
+            try {
+                const serviciosActualizados = [];
+                document.querySelectorAll('#currentServices .service-input').forEach((serviceDiv, index) => {
+                    const nombre = serviceDiv.querySelector('.service-name').value;
+                    const precio = parseFloat(serviceDiv.querySelector('.service-price').value);
+                    const duracion = parseInt(serviceDiv.querySelector('.service-duration').value);
+
+                    if (nombre && !isNaN(precio) && !isNaN(duracion)) {
+                        serviciosActualizados.push({
+                            id: serviceDiv.dataset.id || index.toString(),
+                            nombre,
+                            precio,
+                            duracion
+                        });
+                    }
+                });
+
+                await db.collection('peluquerias').doc(salonId).update({
+                    servicios: serviciosActualizados
+                });
+
+                // Actualizar la vista del panel
+                const updatedSalonDoc = await db.collection('peluquerias').doc(salonId).get();
+                const updatedSalonData = updatedSalonDoc.data();
+                showSalonManagementPanel(updatedSalonData, salonId);
+
+                closeServicesModal();
+                showSuccessMessage('Servicios actualizados correctamente');
+            } catch (error) {
+                console.error('Error al actualizar servicios:', error);
+                showErrorMessage('Error al actualizar los servicios');
+            } finally {
+                submitButton.disabled = false;
+                submitButton.innerHTML = '<i class="fas fa-save"></i> Guardar Cambios';
+            }
+        });
+
+    } catch (error) {
+        console.error('Error al abrir el modal de servicios:', error);
+        showErrorMessage('Error al cargar los servicios');
+    }
+}
+
+// Función para cerrar el modal de servicios
+function closeServicesModal() {
+    document.getElementById('editServicesModal').remove();
+    document.body.classList.remove('modal-open');
+}
+
+// Función para añadir un nuevo servicio al formulario
+function addNewService() {
+    const newServiceHtml = `
+        <div class="service-input">
+            <input type="text" class="service-name" placeholder="Nombre del servicio" required>
+            <input type="number" class="service-price" placeholder="Precio €" required>
+            <input type="number" class="service-duration" placeholder="Duración (min)" required>
+            <button type="button" onclick="this.parentElement.remove()" class="delete-service-btn">
+                <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    `;
+    document.getElementById('currentServices').insertAdjacentHTML('beforeend', newServiceHtml);
 } 
