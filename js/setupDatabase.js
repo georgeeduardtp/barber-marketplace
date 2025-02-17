@@ -168,33 +168,4 @@ async function setupResenas() {
     } catch (error) {
         console.error('Error al agregar reseñas:', error);
     }
-}
-
-// Botón para ejecutar la configuración
-const setupButton = document.createElement('button');
-setupButton.textContent = 'Configurar Base de Datos';
-setupButton.style.position = 'fixed';
-setupButton.style.bottom = '20px';
-setupButton.style.right = '20px';
-setupButton.style.zIndex = '1000';
-setupButton.style.padding = '10px 20px';
-setupButton.style.backgroundColor = '#4A90E2';
-setupButton.style.color = 'white';
-setupButton.style.border = 'none';
-setupButton.style.borderRadius = '5px';
-setupButton.style.cursor = 'pointer';
-
-setupButton.addEventListener('click', async () => {
-    if (confirm('¿Estás seguro de que quieres configurar la base de datos con datos de prueba?')) {
-        const adminCreated = await createAdminUser();
-        if (adminCreated) {
-            await setupPeluquerias();
-            await setupResenas();
-            alert('Base de datos configurada correctamente');
-        } else {
-            alert('Error al configurar la base de datos. Verifica la consola para más detalles.');
-        }
-    }
-});
-
-document.body.appendChild(setupButton); 
+} 
