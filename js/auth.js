@@ -47,6 +47,19 @@ function showAdminPanel() {
             <h2>Panel de Administración</h2>
             <div class="admin-actions">
                 <button onclick="showCreateSalonAccountModal()">Crear Cuenta de Peluquería</button>
+                <div class="search-admin-container" style="margin: 1rem 0; position: relative;">
+                    <div class="search-admin-bar" style="display: flex; gap: 0.5rem;">
+                        <input type="text" 
+                               id="searchSalonAdmin" 
+                               placeholder="Buscar peluquerías..." 
+                               style="flex: 1; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                        <button onclick="filterSalons()" 
+                                style="background-color: var(--primary-color); color: white; border: none; border-radius: 4px; padding: 0.5rem 1rem;">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                    <div id="searchSuggestions" style="display: none; position: absolute; top: 100%; left: 0; right: 0; background: white; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); z-index: 1000; margin-top: 0.5rem;"></div>
+                </div>
                 <div id="salonAccountsList" class="salon-accounts-list">
                     <h3>Peluquerías Registradas</h3>
                     <!-- Lista de peluquerías se cargará aquí -->
@@ -57,6 +70,177 @@ function showAdminPanel() {
     
     document.querySelector('main').insertAdjacentHTML('afterbegin', adminPanel);
     loadSalonAccounts();
+
+    // Añadir evento para búsqueda en vivo
+    document.getElementById('searchSalonAdmin').addEventListener('input', debounce(showSuggestions, 300));
+
+    // Añadir evento para buscar al presionar Enter
+    document.getElementById('searchSalonAdmin').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            filterSalons();
+            hideSuggestions();
+        }
+    });
+
+    // Cerrar sugerencias al hacer clic fuera
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.search-admin-container')) {
+            hideSuggestions();
+        }
+    });
+}
+
+// Función para mostrar sugerencias en tiempo real
+async function showSuggestions() {
+    const searchTerm = document.getElementById('searchSalonAdmin').value.toLowerCase().trim();
+    const suggestionsDiv = document.getElementById('searchSuggestions');
+    
+    if (!searchTerm) {
+        hideSuggestions();
+        return;
+    }
+
+    try {
+        const snapshot = await db.collection('users')
+            .where('role', '==', 'peluqueria')
+            .get();
+
+        let suggestions = [];
+        
+        for (const userDoc of snapshot.docs) {
+            const userData = userDoc.data();
+            if (userData.name.toLowerCase().includes(searchTerm) || 
+                userData.email.toLowerCase().includes(searchTerm)) {
+                suggestions.push(userData);
+            }
+        }
+
+        if (suggestions.length > 0) {
+            let html = '';
+            suggestions.forEach(salon => {
+                html += `
+                    <div class="suggestion-item" 
+                         onclick="selectSuggestion('${salon.name}')"
+                         style="padding: 0.8rem; cursor: pointer; border-bottom: 1px solid #eee; transition: background 0.2s;">
+                        <div style="font-weight: bold;">${salon.name}</div>
+                        <div style="color: #666; font-size: 0.9rem;">${salon.email}</div>
+                    </div>
+                `;
+            });
+            suggestionsDiv.innerHTML = html;
+            suggestionsDiv.style.display = 'block';
+
+            // Añadir hover effect a las sugerencias
+            const items = suggestionsDiv.getElementsByClassName('suggestion-item');
+            Array.from(items).forEach(item => {
+                item.addEventListener('mouseover', () => {
+                    item.style.backgroundColor = '#f5f5f5';
+                });
+                item.addEventListener('mouseout', () => {
+                    item.style.backgroundColor = 'white';
+                });
+            });
+        } else {
+            hideSuggestions();
+        }
+    } catch (error) {
+        console.error('Error al buscar sugerencias:', error);
+        hideSuggestions();
+    }
+}
+
+// Función para seleccionar una sugerencia
+function selectSuggestion(salonName) {
+    document.getElementById('searchSalonAdmin').value = salonName;
+    filterSalons();
+    hideSuggestions();
+}
+
+// Función para ocultar sugerencias
+function hideSuggestions() {
+    const suggestionsDiv = document.getElementById('searchSuggestions');
+    if (suggestionsDiv) {
+        suggestionsDiv.style.display = 'none';
+    }
+}
+
+// Función debounce para evitar muchas llamadas seguidas
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+// Función para filtrar peluquerías
+async function filterSalons() {
+    const searchTerm = document.getElementById('searchSalonAdmin').value.toLowerCase().trim();
+    const salonsList = document.getElementById('salonAccountsList');
+    if (!salonsList) return;
+
+    try {
+        const snapshot = await db.collection('users')
+            .where('role', '==', 'peluqueria')
+            .get();
+
+        let html = '<h3>Peluquerías Registradas</h3><div class="salons-list">';
+        let found = false;
+        
+        for (const userDoc of snapshot.docs) {
+            const userData = userDoc.data();
+            const userId = userDoc.id;
+            
+            // Filtrar por nombre o email
+            if (!searchTerm || 
+                userData.name.toLowerCase().includes(searchTerm) || 
+                userData.email.toLowerCase().includes(searchTerm)) {
+                
+                found = true;
+                const peluqueriaSnapshot = await db.collection('peluquerias')
+                    .where('adminId', '==', userId)
+                    .get();
+
+                const peluqueriaData = peluqueriaSnapshot.empty ? null : peluqueriaSnapshot.docs[0].data();
+                const peluqueriaId = peluqueriaSnapshot.empty ? null : peluqueriaSnapshot.docs[0].id;
+
+                html += `
+                    <div class="salon-item">
+                        <p><strong>${userData.name}</strong></p>
+                        <p>${userData.email}</p>
+                        ${peluqueriaData ? 
+                            `<p style="color: #2ecc71; font-weight: bold;"><i class="fas fa-check-circle"></i> Perfil completado</p>` : 
+                            '<p style="color: #e74c3c; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Perfil no completado</p>'
+                        }
+                        <div class="salon-actions">
+                            <button onclick="showImageManager('${peluqueriaId}')" 
+                                    class="manage-images-btn" style="background-color: var(--primary-color); color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; margin-top: 10px; margin-right: 10px;">
+                                <i class="fas fa-images"></i> Gestionar Imágenes
+                            </button>
+                            <button onclick="deleteSalonAndUser('${userId}', '${peluqueriaId || ''}')" 
+                                    class="delete-btn" style="background-color: #e74c3c; color: white; padding: 5px 10px; border: none; border-radius: 3px; cursor: pointer; margin-top: 10px;">
+                                <i class="fas fa-trash"></i> Eliminar Peluquería
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        if (!found && searchTerm) {
+            html += '<p style="text-align: center; padding: 1rem;">No se encontraron peluquerías que coincidan con la búsqueda</p>';
+        }
+        
+        html += '</div>';
+        salonsList.innerHTML = html;
+    } catch (error) {
+        console.error('Error al filtrar peluquerías:', error);
+        salonsList.innerHTML = '<p>Error al filtrar las peluquerías</p>';
+    }
 }
 
 // Función para mostrar el modal de creación de cuenta de peluquería (versión admin)
