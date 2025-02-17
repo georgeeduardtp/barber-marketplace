@@ -1,0 +1,341 @@
+/* Panel de Administración */
+.admin-panel {
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-panel::after {
+    display: none;
+}
+
+.admin-panel h2 {
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+}
+
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.admin-actions button {
+    padding: 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-actions button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease-out;
+    pointer-events: none;
+}
+
+.admin-actions button:hover {
+    background-color: #357ABD;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.admin-actions button:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.salon-accounts-list {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 500px; /* Altura fija para mostrar un número limitado de peluquerías */
+    overflow-y: auto;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* Estilizar la barra de scroll */
+.salon-accounts-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.salon-accounts-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+.salon-accounts-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 8px;
+    border: 2px solid #f1f1f1;
+}
+
+.salon-accounts-list::-webkit-scrollbar-thumb:hover {
+    background: #357ABD;
+}
+
+.salons-list {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-right: 0.5rem; /* Espacio para el scrollbar */
+}
+
+.salon-item {
+    background-color: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.5s ease-out;
+    width: 100%; /* Cambiamos max-width por width para que se ajuste al grid */
+    margin: 0;  /* Eliminamos el margen auto para que el grid controle el espaciado */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.salon-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.salon-item p {
+    margin: 0.3rem 0;
+    font-size: 0.95rem; /* Tamaño de texto ligeramente más pequeño */
+    line-height: 1.4;
+}
+
+.salon-item strong {
+    color: var(--secondary-color);
+    font-size: 1.1rem; /* Tamaño del nombre de la peluquería */
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Botones de acción más compactos */
+.salon-item .action-buttons {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.salon-item button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Panel de Gestión */
+.management-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    max-height: 2000px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+.section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.section::after {
+    display: none;
+}
+
+.salon-info-details {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.salon-info-details:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.salon-info-details p {
+    margin: 0.8rem 0;
+    line-height: 1.4;
+}
+
+.salon-info-details strong {
+    color: var(--secondary-color);
+    margin-right: 0.5rem;
+}
+
+.salon-info-details h4 {
+    color: var(--secondary-color);
+    margin: 1.5rem 0 1rem 0;
+    font-size: 1.1rem;
+}
+
+.horarios-list {
+    display: grid;
+    gap: 0.5rem;
+    padding-left: 1rem;
+}
+
+.horarios-list p {
+    margin: 0.3rem 0;
+}
+
+.section h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.section h3 i {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(74, 144, 226, 0.1);
+    border-radius: 50%;
+    padding: 0.5rem;
+}
+
+.salon-info-details i {
+    color: var(--primary-color);
+    width: 20px;
+    margin-right: 0.5rem;
+}
+
+.section button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section button::after {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%);
+    top: -50%;
+    left: -50%;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0.5);
+}
+
+.section button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.section button:hover::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.section button i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.section button:hover i {
+    transform: scale(1.1);
+}
+
+.section button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .salons-list {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .salons-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    .salon-accounts-list {
+        height: 600px; /* Un poco más alto en móviles para mejor usabilidad */
+    }
+}
+
+@media (max-width: 480px) {
+    .salons-list {
+        grid-template-columns: 1fr;
+    }
+} 

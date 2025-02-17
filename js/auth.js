@@ -211,8 +211,8 @@ async function loadSalonAccounts() {
                     <p><strong>${userData.name}</strong></p>
                     <p>${userData.email}</p>
                     ${peluqueriaData ? 
-                        `<p>Perfil completado</p>` : 
-                        '<p>Perfil no completado</p>'
+                        `<p style="color: #2ecc71; font-weight: bold;"><i class="fas fa-check-circle"></i> Perfil completado</p>` : 
+                        '<p style="color: #e74c3c; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Perfil no completado</p>'
                     }
                     <div class="salon-actions">
                         <button onclick="showImageManager('${peluqueriaId}')" 

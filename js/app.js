@@ -210,4 +210,87 @@ document.getElementById('searchInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         searchSalons();
     }
-}); 
+});
+
+// Función para crear cuenta de peluquería desde el panel de admin
+async function crearCuentaPeluqueria() {
+    try {
+        showLoader();
+        
+        // Generar email y contraseña temporal
+        const randomNum = Math.floor(Math.random() * 10000);
+        const email = `peluqueria${randomNum}@gmail.com`;
+        const password = `Peluqueria${randomNum}`;
+        
+        // Crear cuenta en Firebase Auth
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        const uid = userCredential.user.uid;
+        
+        // Cerrar la sesión creada automáticamente
+        await firebase.auth().signOut();
+        
+        // Restaurar la sesión del admin
+        const adminAuth = JSON.parse(localStorage.getItem('adminAuth'));
+        if (adminAuth) {
+            await firebase.auth().signInWithEmailAndPassword(adminAuth.email, adminAuth.password);
+        }
+        
+        // Crear documento en Firestore
+        await db.collection('peluquerias').doc(uid).set({
+            nombre: `Peluquería Prueba ${randomNum}`,
+            email: email,
+            perfilCompletado: false,
+            fechaCreacion: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        // Mostrar mensaje de éxito con las credenciales
+        alert(`Cuenta creada con éxito:\nEmail: ${email}\nContraseña: ${password}\n\nGuarda estas credenciales para compartirlas con la peluquería.`);
+        
+        // Recargar la lista de peluquerías
+        cargarPeluquerias();
+        
+    } catch (error) {
+        console.error('Error al crear cuenta:', error);
+        alert('Error al crear la cuenta de peluquería');
+    } finally {
+        hideLoader();
+    }
+}
+
+// Función para cargar la lista de peluquerías
+async function cargarPeluquerias() {
+    try {
+        const snapshot = await db.collection('peluquerias').get();
+        const salonsList = document.getElementById('salonsList');
+        
+        if (snapshot.empty) {
+            salonsList.innerHTML = '<p>No hay peluquerías registradas</p>';
+            return;
+        }
+
+        let html = '';
+        snapshot.forEach(doc => {
+            const salon = doc.data();
+            html += `
+                <div class="salon-item">
+                    <strong>${salon.nombre}</strong>
+                    <p>${salon.email}</p>
+                    <p>Perfil ${salon.perfilCompletado ? 'completado' : 'no completado'}</p>
+                    <div class="action-buttons">
+                        <button onclick="gestionarImagenes('${doc.id}')">
+                            <i class="fas fa-images"></i> Gestionar Imágenes
+                        </button>
+                        <button onclick="eliminarPeluqueria('${doc.id}')" style="background-color: var(--accent-color)">
+                            <i class="fas fa-trash"></i> Eliminar Peluquería
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        salonsList.innerHTML = html;
+    } catch (error) {
+        console.error('Error al cargar peluquerías:', error);
+        document.getElementById('salonsList').innerHTML = '<p>Error al cargar las peluquerías</p>';
+    }
+} 
