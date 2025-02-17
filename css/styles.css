@@ -130,6 +130,59 @@ header.scrolled .auth-buttons button {
     background-color: transparent;
     border: 2px solid var(--primary-color);
     color: var(--primary-color);
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#loginBtn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(
+        45deg,
+        var(--primary-color),
+        #2980b9,
+        var(--primary-color)
+    );
+    border-radius: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: -1;
+    background-size: 200% 200%;
+    animation: gradientMove 3s ease infinite;
+}
+
+#loginBtn i {
+    font-size: 0.9rem;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+#loginBtn:hover {
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+#loginBtn:hover i {
+    transform: rotate(360deg);
+}
+
+#loginBtn:hover::before {
+    transform: translate(-50%, -50%) scale(2.5);
+}
+
+#loginBtn:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 8px rgba(74, 144, 226, 0.2);
+    transition: all 0.2s ease;
 }
 
 #registerBtn {
@@ -338,36 +391,34 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(8px);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     z-index: 1000;
-    overflow-y: auto;
     padding: 2rem;
 }
 
 .modal-content {
-    background: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
     width: 95%;
-    max-width: 1200px;
-    margin: auto;
+    max-width: 450px;
     position: relative;
-    max-height: 95vh;
-    overflow-y: auto;
-    animation: modalSlideIn 0.3s ease-out;
+    overflow: hidden;
+    animation: modalAppear 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes modalSlideIn {
+@keyframes modalAppear {
     from {
-        transform: translateY(-20px);
         opacity: 0;
+        transform: scale(0.8) translateY(40px);
     }
     to {
-        transform: translateY(0);
         opacity: 1;
+        transform: scale(1) translateY(0);
     }
 }
 
@@ -377,215 +428,378 @@ footer {
 }
 
 .modal-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 2rem;
-    text-align: center;
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
     position: relative;
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+    overflow: hidden;
+}
+
+.modal-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at top right, rgba(255,255,255,0.2), transparent 60%);
+    z-index: 0;
+}
+
+.modal-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+    z-index: 0;
 }
 
 .modal-header i {
-    font-size: 3rem;
+    font-size: 3.5rem;
     margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    color: white;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    animation: iconFloat 3s ease-in-out infinite;
+}
+
+@keyframes iconFloat {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .modal-header h2 {
     margin: 0;
-    font-size: 1.5rem;
+    font-size: 1.8rem;
     color: white;
+    position: relative;
+    z-index: 1;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
 .modal-subtitle {
     margin: 0.5rem 0 0 0;
-    font-size: 0.9rem;
+    font-size: 1rem;
     opacity: 0.9;
+    color: white;
+    position: relative;
+    z-index: 1;
 }
 
 .close-modal {
     position: absolute;
     top: 1rem;
     right: 1rem;
-    background: none;
+    background: rgba(255,255,255,0.2);
     border: none;
     color: white;
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     cursor: pointer;
-    padding: 0;
-    width: 30px;
-    height: 30px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 2;
+    backdrop-filter: blur(4px);
 }
 
 .close-modal:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255,255,255,0.3);
+    transform: rotate(90deg);
 }
 
 .login-modal form {
-    padding: 2rem;
+    padding: 2.5rem;
+    background: white;
 }
 
 .login-modal .form-group {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.8rem;
+    position: relative;
 }
 
 .login-modal label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     color: var(--secondary-color);
     font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
 }
 
 .login-modal label i {
     margin-right: 0.5rem;
     color: var(--primary-color);
+    transition: all 0.3s ease;
 }
 
 .login-modal input {
     width: 100%;
-    padding: 0.8rem;
-    border: 2px solid #eee;
-    border-radius: 8px;
+    padding: 1rem 1.2rem;
+    border: 2px solid #eef2f7;
+    border-radius: 12px;
     font-size: 1rem;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: #f8fafc;
+}
+
+.login-modal input:hover {
+    background: #fff;
+    border-color: #e2e8f0;
 }
 
 .login-modal input:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
 }
 
 .login-modal .submit-button {
     width: 100%;
     padding: 1rem;
-    background-color: var(--primary-color);
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
     color: white;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
+    border-radius: 12px;
+    font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 0.8rem;
+    position: relative;
+    overflow: hidden;
+    margin-top: 2rem;
+}
+
+.login-modal .submit-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
 }
 
 .login-modal .submit-button:hover {
-    background-color: #357ABD;
     transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(41, 128, 185, 0.3);
 }
 
-.login-modal .submit-button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    transform: none;
+.login-modal .submit-button:hover::before {
+    left: 100%;
+}
+
+.login-modal .submit-button:active {
+    transform: translateY(1px);
+}
+
+.login-modal .submit-button i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.login-modal .submit-button:hover i {
+    transform: translateX(3px);
 }
 
 .login-modal .modal-footer {
     padding: 1.5rem 2rem;
     text-align: center;
-    border-top: 1px solid #eee;
+    background: #f8fafc;
+    border-top: 1px solid #eef2f7;
 }
 
 .login-modal .modal-footer p {
     margin: 0;
-    color: #666;
+    color: #64748b;
+    font-size: 0.95rem;
 }
 
 .login-modal .modal-footer span {
     color: var(--primary-color);
     cursor: pointer;
     font-weight: 500;
+    transition: all 0.3s ease;
 }
 
 .login-modal .modal-footer span:hover {
-    text-decoration: underline;
+    color: #2980b9;
 }
 
 @media (max-width: 480px) {
-    .modal-content {
-        width: 95%;
+    .modal {
+        padding: 1rem;
     }
     
-    .login-modal form {
-        padding: 1.5rem;
+    .modal-content {
+        width: 100%;
     }
     
     .modal-header {
-        padding: 1.5rem;
+        padding: 2rem 1.5rem;
     }
     
     .modal-header i {
         font-size: 2.5rem;
+    }
+    
+    .login-modal form {
+        padding: 1.5rem;
     }
 }
 
 /* Estilos para las tarjetas de peluquerías */
 .salon-card {
     background: white;
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .salon-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.15);
 }
 
 .salon-image {
     width: 100%;
-    height: 200px;
+    height: 220px;
     background-size: cover;
     background-position: center;
     background-repeat: no-repeat;
+    transition: transform 0.5s ease;
+}
+
+.salon-card:hover .salon-image {
+    transform: scale(1.05);
 }
 
 .salon-info {
-    padding: 15px;
+    padding: 1.5rem;
+    background: transparent;
 }
 
 .salon-info h3 {
-    margin: 0 0 10px 0;
-    color: #333;
+    margin: 0 0 12px 0;
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.salon-card:hover .salon-info h3 {
+    color: var(--primary-color);
 }
 
 .salon-info p {
-    margin: 0 0 10px 0;
+    margin: 0 0 12px 0;
     color: #666;
+    font-size: 0.95rem;
 }
 
 .salon-card .rating {
-    padding: 1rem;
+    padding: 0.5rem 0;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
 }
 
 .salon-card .stars {
     color: #FFD700;
+    font-size: 1.1rem;
 }
 
-.salon-card button {
+.salon-card .rating span {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.view-details-btn {
     width: 100%;
     padding: 1rem;
-    background: linear-gradient(135deg, #2980b9, var(--primary-color));
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
     color: white;
     border: none;
+    border-radius: 12px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.salon-card button:hover {
+.view-details-btn i {
+    font-size: 1.1rem;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.view-details-btn:hover {
     background: linear-gradient(135deg, #2980b9, var(--primary-color));
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 15px rgba(41, 128, 185, 0.3);
+    transform: translateY(-2px);
+}
+
+.view-details-btn:hover i {
+    transform: scale(1.2) rotate(-10deg);
+}
+
+.view-details-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.2),
+        transparent
+    );
+    transition: 0.5s;
+}
+
+.view-details-btn:hover::before {
+    left: 100%;
+}
+
+.view-details-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 8px rgba(41, 128, 185, 0.2);
 }
 
 /* Botón de cerrar modal */
@@ -1078,7 +1292,7 @@ body.modal-open {
     .alert {
         left: 20px;
         right: 20px;
-        text-align: center;
+    text-align: center;
         justify-content: center;
     }
 }
@@ -1647,41 +1861,150 @@ body.modal-open {
 }
 
 .salon-header {
-    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    background: 
+        linear-gradient(135deg, rgba(74, 144, 226, 0.95) 0%, rgba(41, 128, 185, 0.2) 100%),
+        repeating-linear-gradient(45deg, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 2px, transparent 2px, transparent 8px),
+        radial-gradient(circle at 50% 50%, var(--primary-color), #2980b9);
     color: white;
-    padding: 3rem 2rem;
-    border-radius: 15px;
-    margin-bottom: 2rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 4rem 2rem;
+    border-radius: 25px;
+    margin: -2rem auto 3rem;
+    box-shadow: 
+        0 15px 35px rgba(41, 128, 185, 0.2),
+        0 5px 15px rgba(0, 0, 0, 0.05);
+    position: relative;
+    overflow: hidden;
+    max-width: 1100px;
+    z-index: 1;
+}
+
+.salon-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: 
+        radial-gradient(circle at top right, rgba(255,255,255,0.2), transparent 50%),
+        radial-gradient(circle at bottom left, rgba(41,128,185,0.15), transparent 50%),
+        radial-gradient(circle at bottom left, rgba(41,128,185,0.15), transparent 50%);
+    z-index: 0;
+}
+
+.salon-header::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url('data:image/svg+xml,<svg width="20" height="20" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.05)"/></svg>');
+    opacity: 0.5;
+    z-index: 0;
 }
 
 .salon-info {
     text-align: center;
+    position: relative;
+    z-index: 2;
 }
 
 .salon-info h1 {
-    font-size: 2.5rem;
-    margin-bottom: 1rem;
-    font-weight: 600;
+    font-size: 3rem;
+    margin-bottom: 1.5rem;
+    font-weight: 700;
+    text-shadow: 0 2px 15px rgba(0,0,0,0.2);
+    background: linear-gradient(to right, #ffffff, #e6e6e6);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+    animation: titleGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes titleGlow {
+    from {
+        text-shadow: 0 2px 15px rgba(0,0,0,0.2);
+    }
+    to {
+        text-shadow: 0 2px 25px rgba(255,255,255,0.3);
+    }
 }
 
 .salon-basic-info {
     display: flex;
     justify-content: center;
     gap: 2rem;
-    margin: 1.5rem 0;
+    margin: 2rem 0;
     flex-wrap: wrap;
+    animation: fadeInUp 0.6s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .salon-basic-info p {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    color: rgba(255, 255, 255, 0.9);
+    gap: 1rem;
+    color: rgba(255, 255, 255, 0.95);
+    padding: 1rem 1.5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.salon-basic-info p:hover {
+    background: rgba(255, 255, 255, 0.15);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 .salon-basic-info i {
-    font-size: 1.2rem;
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.8rem;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.salon-basic-info p:hover i {
+    transform: scale(1.1) rotate(-5deg);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+    .salon-header {
+        padding: 3rem 1.5rem;
+        margin: -1rem auto 2rem;
+        border-radius: 20px;
+    }
+
+    .salon-info h1 {
+        font-size: 2.2rem;
+    }
+
+    .salon-basic-info {
+        gap: 1rem;
+    }
+
+    .salon-basic-info p {
+        padding: 0.8rem 1.2rem;
+        width: 100%;
+        justify-content: center;
+    }
 }
 
 .salon-content {
@@ -1820,30 +2143,44 @@ body.modal-open {
 
 .booking-form .form-group {
     margin-bottom: 1.5rem;
+    background: rgba(255, 255, 255, 0.95);
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    border: 2px solid rgba(74, 144, 226, 0.15);
+    transition: all 0.3s ease;
+}
+
+.booking-form .form-group:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border-color: rgba(74, 144, 226, 0.3);
 }
 
 .booking-form label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.8rem;
     color: var(--secondary-color);
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1.1rem;
 }
 
 .booking-form input,
 .booking-form select {
     width: 100%;
-    padding: 0.8rem;
+    padding: 1rem;
     border: 2px solid #eee;
     border-radius: 8px;
     font-size: 1rem;
     transition: all 0.3s ease;
+    background-color: white;
 }
 
 .booking-form input:focus,
 .booking-form select:focus {
     border-color: var(--primary-color);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(0,0,0,0.05);
+    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
 }
 
 .time-slots {
@@ -1935,25 +2272,23 @@ body.modal-open {
 
 @media (max-width: 768px) {
     .salon-header {
-        padding: 2rem 1rem;
+        padding: 3rem 1.5rem;
+        margin: -1rem auto 2rem;
+        border-radius: 20px;
     }
 
     .salon-info h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
     }
 
     .salon-basic-info {
-        flex-direction: column;
         gap: 1rem;
-        align-items: center;
     }
 
-    .services-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .schedule-grid {
-        grid-template-columns: 1fr;
+    .salon-basic-info p {
+        padding: 0.8rem 1.2rem;
+        width: 100%;
+        justify-content: center;
     }
 }
 

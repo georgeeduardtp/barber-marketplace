@@ -54,7 +54,10 @@ async function loadFeaturedSalons() {
                             ${generateStars(salon.valoracion || 0)}
                             <span>(${salon.numValoraciones || 0} reseñas)</span>
                         </div>
-                        <button onclick="verDetalles('${doc.id}')">Ver Detalles</button>
+                        <button onclick="verDetalles('${doc.id}')" class="view-details-btn">
+                            <i class="fas fa-search"></i>
+                            Ver Detalles
+                        </button>
                     </div>
                 </div>
             `;
