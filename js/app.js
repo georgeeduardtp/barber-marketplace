@@ -247,14 +247,14 @@ async function crearCuentaPeluqueria() {
         });
 
         // Mostrar mensaje de éxito con las credenciales
-        alert(`Cuenta creada con éxito:\nEmail: ${email}\nContraseña: ${password}\n\nGuarda estas credenciales para compartirlas con la peluquería.`);
+        showSuccessMessage(`Cuenta creada con éxito:\nEmail: ${email}\nContraseña: ${password}\n\nGuarda estas credenciales para compartirlas con la peluquería.`);
         
         // Recargar la lista de peluquerías
         cargarPeluquerias();
         
     } catch (error) {
         console.error('Error al crear cuenta:', error);
-        alert('Error al crear la cuenta de peluquería');
+        showErrorMessage('Error al crear la cuenta de peluquería');
     } finally {
         hideLoader();
     }

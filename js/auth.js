@@ -340,8 +340,7 @@ function showSuccessMessage(message) {
     const alert = `
         <div class="alert success">
             <i class="fas fa-check-circle"></i>
-            ${message}
-            <button class="close-btn" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+            <span class="message">${message}</span>
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', alert);
@@ -356,8 +355,7 @@ function showErrorMessage(message) {
     const alert = `
         <div class="alert error">
             <i class="fas fa-exclamation-circle"></i>
-            ${message}
-            <button class="close-btn" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+            <span class="message">${message}</span>
         </div>
     `;
     document.body.insertAdjacentHTML('beforeend', alert);
@@ -520,9 +518,9 @@ function showLoginModal() {
             
             let errorMessage = 'Error al iniciar sesión';
             if (error.code === 'auth/user-not-found') {
-                errorMessage = 'Usuario no encontrado';
+                showErrorMessage('Usuario no encontrado');
             } else if (error.code === 'auth/wrong-password') {
-                errorMessage = 'Contraseña incorrecta';
+                showErrorMessage('Contraseña incorrecta');
             }
             
             alert(errorMessage);
@@ -1657,6 +1655,21 @@ async function cancelarReservaModal(reservaId, salonId) {
             console.error('Error al cancelar reserva:', error);
             showErrorMessage('Error al cancelar la reserva');
         }
+    }
+}
+
+async function completarReservaModal(reservaId, salonId) {
+    try {
+        await db.collection('reservas').doc(reservaId).update({
+            estado: 'confirmada'
+        });
+        
+        await cargarReservasModal(salonId);
+        await actualizarEstadisticas(salonId);
+        showSuccessMessage('Reserva completada exitosamente');
+    } catch (error) {
+        console.error('Error al completar reserva:', error);
+        showErrorMessage('Error al completar la reserva');
     }
 }
 
