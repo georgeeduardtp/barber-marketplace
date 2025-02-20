@@ -1,0 +1,1224 @@
+/* Panel de Administración */
+.admin-panel {
+    background-color: white;
+    border-radius: 10px;
+    padding: 2rem;
+    margin: 2rem 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-panel::after {
+    display: none;
+}
+
+.admin-panel h2 {
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+}
+
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.admin-actions button {
+    padding: 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.admin-actions button::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 300%;
+    height: 300%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.2) 0%, transparent 70%);
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0.5s ease-out;
+    pointer-events: none;
+}
+
+.admin-actions button:hover {
+    background-color: #357ABD;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2);
+}
+
+.admin-actions button:hover::after {
+    transform: translate(-50%, -50%) scale(1);
+}
+
+.salon-accounts-list {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    height: 500px; /* Altura fija para mostrar un número limitado de peluquerías */
+    overflow-y: auto;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+/* Estilizar la barra de scroll */
+.salon-accounts-list::-webkit-scrollbar {
+    width: 8px;
+}
+
+.salon-accounts-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+.salon-accounts-list::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 8px;
+    border: 2px solid #f1f1f1;
+}
+
+.salon-accounts-list::-webkit-scrollbar-thumb:hover {
+    background: #357ABD;
+}
+
+.salons-list {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-right: 0.5rem; /* Espacio para el scrollbar */
+}
+
+.salon-item {
+    background-color: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    animation: fadeIn 0.5s ease-out;
+    width: 100%; /* Cambiamos max-width por width para que se ajuste al grid */
+    margin: 0;  /* Eliminamos el margen auto para que el grid controle el espaciado */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.salon-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.salon-item p {
+    margin: 0.3rem 0;
+    font-size: 0.95rem; /* Tamaño de texto ligeramente más pequeño */
+    line-height: 1.4;
+}
+
+.salon-item strong {
+    color: var(--secondary-color);
+    font-size: 1.1rem; /* Tamaño del nombre de la peluquería */
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Botones de acción más compactos */
+.salon-item .action-buttons {
+    display: flex;
+    gap: 0.8rem;
+    margin-top: 1rem;
+}
+
+.salon-item button {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+
+/* Panel de Gestión */
+.management-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    padding: 1rem;
+    transition: all 0.3s ease;
+    max-height: 2000px;
+    opacity: 1;
+    overflow: hidden;
+}
+
+.section {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.section:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.section::after {
+    display: none;
+}
+
+.salon-info-details {
+    background-color: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.salon-info-details:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+}
+
+.salon-info-details p {
+    margin: 0.8rem 0;
+    line-height: 1.4;
+}
+
+.salon-info-details strong {
+    color: var(--secondary-color);
+    margin-right: 0.5rem;
+}
+
+.salon-info-details h4 {
+    color: var(--secondary-color);
+    margin: 1.5rem 0 1rem 0;
+    font-size: 1.1rem;
+}
+
+.horarios-list {
+    display: grid;
+    gap: 0.5rem;
+    padding-left: 1rem;
+}
+
+.horarios-list p {
+    margin: 0.3rem 0;
+}
+
+.section h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.section h3 i {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(74, 144, 226, 0.1);
+    border-radius: 50%;
+    padding: 0.5rem;
+}
+
+.salon-info-details i {
+    color: var(--primary-color);
+    width: 20px;
+    margin-right: 0.5rem;
+}
+
+.section button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 1rem;
+    border: none;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--primary-color), #2980b9);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.section button::after {
+    content: '';
+    position: absolute;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 50%);
+    top: -50%;
+    left: -50%;
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: scale(0.5);
+}
+
+.section button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.section button:hover::after {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.section button i {
+    font-size: 1.2rem;
+    transition: transform 0.3s ease;
+}
+
+.section button:hover i {
+    transform: scale(1.1);
+}
+
+.section button:active {
+    transform: translateY(1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.section button:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .salons-list {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .salons-list {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+    .salon-accounts-list {
+        height: 600px; /* Un poco más alto en móviles para mejor usabilidad */
+    }
+}
+
+@media (max-width: 480px) {
+    .salons-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+.dashboard-container {
+    padding: 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.dashboard-section h2 {
+    color: #333;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: transform 0.3s ease;
+    border: 1px solid #e9ecef;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card i {
+    font-size: 2rem;
+    color: #2ecc71;
+    margin-bottom: 1rem;
+}
+
+.stat-value {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #2d3436;
+    margin: 0.5rem 0;
+}
+
+.stat-label {
+    color: #636e72;
+    font-size: 1rem;
+}
+
+.chart-container {
+    height: 400px;
+    position: relative;
+    margin-top: 1rem;
+    padding: 1rem;
+    background: #fff;
+    border-radius: 8px;
+    border: 1px solid #e9ecef;
+}
+
+.chart-controls {
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.view-selector {
+    padding: 0.5rem 1rem;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    background-color: white;
+    color: #2d3436;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-selector:hover {
+    border-color: #2ecc71;
+}
+
+.view-selector:focus {
+    outline: none;
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
+}
+
+.price-control {
+    background: #f8f9fa;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    border: 1px solid #e9ecef;
+}
+
+.price-control label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #2d3436;
+    font-weight: 500;
+}
+
+.price-input-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.price-input-group input {
+    padding: 0.5rem;
+    border: 1px solid #e9ecef;
+    border-radius: 4px;
+    font-size: 1rem;
+    width: 100px;
+    transition: all 0.3s ease;
+}
+
+.price-input-group input:focus {
+    outline: none;
+    border-color: #2ecc71;
+    box-shadow: 0 0 0 2px rgba(46, 204, 113, 0.2);
+}
+
+.currency-symbol {
+    color: #2d3436;
+    font-weight: 500;
+}
+
+.save-price-btn {
+    padding: 0.5rem 1rem;
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.save-price-btn:hover {
+    background-color: #27ae60;
+    transform: translateY(-1px);
+}
+
+.save-price-btn:active {
+    transform: translateY(1px);
+}
+
+.save-price-btn i {
+    font-size: 0.9rem;
+}
+
+.stats-table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.stats-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px;
+}
+
+.stats-table th,
+.stats-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.stats-table th {
+    background-color: #f8f9fa;
+    color: #2d3436;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.stats-table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.stats-table tbody tr:hover {
+    background-color: #f8f9fa;
+}
+
+.stats-table td {
+    color: #636e72;
+}
+
+.stats-table td:last-child {
+    color: #2ecc71;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .stats-table-container {
+        margin: 0 -1rem;
+        border-radius: 0;
+    }
+}
+
+/* Estilos para estados de peluquerías */
+.salon-item.inactive {
+    opacity: 0.8;
+    border: 1px solid #e74c3c;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin: 0.5rem 0;
+}
+
+.status-badge.active {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+}
+
+.status-badge.inactive {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.status-badge i {
+    font-size: 1rem;
+}
+
+.status-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.status-btn.deactivate {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.status-btn.activate {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.status-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.status-btn:active {
+    transform: translateY(0);
+}
+
+/* Ajustar el espaciado de los botones en salon-actions */
+.salon-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.salon-actions button {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 14px;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    height: 42px;
+    color: white;
+}
+
+.salon-actions .status-btn {
+    background-color: var(--primary-color);
+}
+
+.salon-actions .status-btn.deactivate {
+    background-color: #e74c3c;
+}
+
+.salon-actions .status-btn.activate {
+    background-color: #2ecc71;
+}
+
+.salon-actions .manage-images-btn {
+    background-color: var(--primary-color);
+}
+
+.salon-actions .delete-btn {
+    background-color: #e74c3c;
+}
+
+/* Estilos para la sección de pagos */
+.payments-section {
+    margin-top: 2rem;
+}
+
+.payment-form {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-bottom: 2rem;
+}
+
+.payment-form h3 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+    font-weight: 500;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.primary-button {
+    background-color: #2ecc71;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: background-color 0.3s;
+}
+
+.primary-button:hover {
+    background-color: #27ae60;
+}
+
+.payment-history {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.payment-history h3 {
+    margin-bottom: 1.5rem;
+    color: #2c3e50;
+}
+
+.payment-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.payment-filters select,
+.payment-filters input {
+    padding: 0.5rem;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.payment-table-container {
+    overflow-x: auto;
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.payment-table th,
+.payment-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+.payment-table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.payment-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Estilos para las tarjetas de pago de peluquerías */
+.salons-payment-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.salon-payment-card {
+    background: white;
+    border-radius: 6px;
+    padding: 0.8rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+.salon-payment-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.salon-payment-card .salon-info {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex: 1;
+    margin: 0;
+}
+
+.salon-payment-card .salon-name {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin: 0;
+    min-width: 180px;
+}
+
+.salon-payment-card .salon-email {
+    color: #7f8c8d;
+    font-size: 0.85rem;
+    margin: 0;
+    flex: 1;
+}
+
+.salon-payment-card .salon-status {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.25rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: 1rem;
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+.salon-payment-card .salon-status.active {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+}
+
+.salon-payment-card .salon-status.inactive {
+    background-color: rgba(231, 76, 60, 0.1);
+    color: #e74c3c;
+}
+
+.salon-payment-card .card-actions {
+    display: flex;
+    gap: 0.6rem;
+    margin: 0;
+}
+
+.salon-payment-card .card-actions button {
+    padding: 0.4rem 0.8rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    transition: all 0.3s ease;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+.salon-payment-card .card-actions button i {
+    font-size: 0.85rem;
+}
+
+.salon-payment-card .register-payment-btn {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.salon-payment-card .view-history-btn {
+    background-color: #3498db;
+    color: white;
+}
+
+.salon-payment-card .card-actions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .salon-payment-card {
+        padding: 0.8rem;
+    }
+
+    .salon-payment-card .salon-info {
+        gap: 0.8rem;
+    }
+
+    .salon-payment-card .salon-name {
+        min-width: unset;
+    }
+}
+
+/* Estilos para los modales */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #2c3e50;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #7f8c8d;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.close-modal:hover {
+    color: #34495e;
+}
+
+.modal-body {
+    padding: 1.5rem;
+}
+
+/* Estilos mejorados para el modal de historial */
+.payment-history-modal {
+    max-width: 800px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.payment-history-modal .modal-header {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 12px 12px 0 0;
+}
+
+.modal-header-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.modal-header-content i {
+    font-size: 1.8rem;
+    background: rgba(255,255,255,0.2);
+    padding: 0.8rem;
+    border-radius: 50%;
+}
+
+.modal-title {
+    flex: 1;
+}
+
+.modal-title h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.salon-name-display {
+    margin: 0.3rem 0 0 0;
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.payment-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: #f8f9fa;
+    padding: 1.2rem;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.summary-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.summary-card i {
+    font-size: 1.5rem;
+    color: #3498db;
+    background: rgba(52, 152, 219, 0.1);
+    padding: 1rem;
+    border-radius: 50%;
+}
+
+.summary-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.summary-value {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2c3e50;
+}
+
+.summary-label {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.filter-group {
+    margin-bottom: 1.5rem;
+}
+
+.filter-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #34495e;
+    font-weight: 500;
+}
+
+.filter-group label i {
+    color: #3498db;
+    margin-right: 0.5rem;
+}
+
+.styled-input {
+    padding: 0.8rem;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 1rem;
+    width: 200px;
+    transition: all 0.3s ease;
+}
+
+.styled-input:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+    outline: none;
+}
+
+.payment-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 1rem;
+}
+
+.payment-table th {
+    background: #f8f9fa;
+    padding: 1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    text-align: left;
+    border-bottom: 2px solid #e0e0e0;
+}
+
+.payment-table th i {
+    color: #3498db;
+    margin-right: 0.5rem;
+}
+
+.payment-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    color: #34495e;
+}
+
+.payment-table tr:hover td {
+    background: #f8f9fa;
+}
+
+.payment-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .payment-history-modal {
+        width: 95%;
+        margin: 1rem;
+    }
+
+    .payment-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .styled-input {
+        width: 100%;
+    }
+
+    .payment-table {
+        font-size: 0.9rem;
+    }
+
+    .payment-table th,
+    .payment-table td {
+        padding: 0.8rem;
+    }
+}
+
+/* Estilos para los métodos de pago */
+.payment-method {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.payment-method.transferencia {
+    background-color: rgba(52, 152, 219, 0.1);
+    color: #3498db;
+}
+
+.payment-method.efectivo {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+}
+
+.payment-method.tarjeta {
+    background-color: rgba(155, 89, 182, 0.1);
+    color: #9b59b6;
+}
+
+.payment-method.otro {
+    background-color: rgba(149, 165, 166, 0.1);
+    color: #95a5a6;
+}
+
+.payment-method::before {
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+}
+
+.payment-method.transferencia::before {
+    content: "\f4b9"; /* Ícono de transferencia */
+}
+
+.payment-method.efectivo::before {
+    content: "\f3d1"; /* Ícono de efectivo */
+}
+
+.payment-method.tarjeta::before {
+    content: "\f09d"; /* Ícono de tarjeta */
+}
+
+.payment-method.otro::before {
+    content: "\f058"; /* Ícono de check circle */
+}
+
+.salon-payment-card .payment-status {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0.25rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    margin-left: 1rem;
+    white-space: nowrap;
+    line-height: 1.3;
+}
+
+.salon-payment-card .payment-status.pending {
+    background-color: rgba(243, 156, 18, 0.1);
+    color: #f39c12;
+}
+
+.salon-payment-card .payment-status.paid {
+    background-color: rgba(46, 204, 113, 0.1);
+    color: #2ecc71;
+}
+
+/* Eliminamos todos los pseudo-elementos ::before */
+.salon-payment-card .payment-status::before,
+.salon-payment-card .payment-status.pending::before,
+.salon-payment-card .payment-status.paid::before {
+    display: none;
+}
+
+.salon-payment-card .payment-status .days-counter {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-top: 0.2rem;
+} 

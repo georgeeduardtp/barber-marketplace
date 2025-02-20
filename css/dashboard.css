@@ -1,0 +1,237 @@
+/* Estilos para el Dashboard */
+.dashboard-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.dashboard-section {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.dashboard-section h2 {
+    color: var(--secondary-color);
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.dashboard-section h2 i {
+    color: var(--primary-color);
+    background: rgba(74, 144, 226, 0.1);
+    padding: 0.8rem;
+    border-radius: 50%;
+}
+
+/* Estilos para el Panel de Administración */
+.admin-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.action-button {
+    padding: 1rem 2rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.action-button:hover {
+    background: #357ABD;
+    transform: translateY(-2px);
+}
+
+.search-admin-container {
+    margin: 1rem 0;
+}
+
+.search-admin-bar {
+    display: flex;
+    gap: 1rem;
+}
+
+.search-admin-bar input {
+    flex: 1;
+    padding: 1rem;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.search-button {
+    padding: 0 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+/* Estilos para el Panel de Gestión */
+.management-sections {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.section {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.section h3 {
+    color: var(--secondary-color);
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.section h3 i {
+    color: var(--primary-color);
+    background: rgba(74, 144, 226, 0.1);
+    padding: 0.5rem;
+    border-radius: 50%;
+}
+
+.reservas-filtros {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.reservas-filtros select,
+.reservas-filtros input {
+    padding: 0.8rem;
+    border: 2px solid #eee;
+    border-radius: 8px;
+    font-size: 0.9rem;
+}
+
+.bookings-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.booking-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border-left: 4px solid var(--primary-color);
+}
+
+.salon-info-details {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.salon-info-details p {
+    margin: 0.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.salon-info-details i {
+    color: var(--primary-color);
+    width: 20px;
+}
+
+.edit-button {
+    width: 100%;
+    padding: 1rem;
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.8rem;
+    transition: all 0.3s ease;
+}
+
+.edit-button:hover {
+    background: #357ABD;
+    transform: translateY(-2px);
+}
+
+.services-list {
+    margin-bottom: 1rem;
+}
+
+.service-item {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 0.8rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-container {
+        margin: 1rem auto;
+    }
+
+    .dashboard-section {
+        padding: 1.5rem;
+    }
+
+    .management-sections {
+        grid-template-columns: 1fr;
+    }
+
+    .reservas-filtros {
+        flex-direction: column;
+    }
+}
+
+/* Estados de las reservas */
+.booking-item.pendiente {
+    border-left-color: #f39c12;
+}
+
+.booking-item.confirmada {
+    border-left-color: #2ecc71;
+}
+
+.booking-item.cancelada {
+    border-left-color: #e74c3c;
+}
+
+.estado-pendiente {
+    color: #f39c12;
+}
+
+.estado-confirmada {
+    color: #2ecc71;
+}
+
+.estado-cancelada {
+    color: #e74c3c;
+} 

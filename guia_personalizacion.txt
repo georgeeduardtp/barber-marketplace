@@ -1,0 +1,794 @@
+# GUÍA DE PERSONALIZACIÓN DE LA INTERFAZ
+
+## 1. COLORES Y TEMAS
+### 1.1 Variables Globales
+Los colores principales se pueden modificar en las variables CSS (css/styles.css):
+- --primary-color: Color principal (actualmente #4A90E2)
+- --secondary-color: Color secundario (actualmente #2C3E50)
+- --accent-color: Color de acento (actualmente #E74C3C)
+- --background-color: Color de fondo (actualmente #F5F6FA)
+- --text-color: Color del texto (actualmente #2C3E50)
+
+### 1.2 Paleta de Colores Adicionales
+```css
+:root {
+    /* Colores principales */
+    --primary-color: #4A90E2;
+    --secondary-color: #2C3E50;
+    --accent-color: #E74C3C;
+    
+    /* Variaciones de colores principales */
+    --primary-light: #6BA4E7;
+    --primary-dark: #2C7CD1;
+    
+    /* Colores de estado */
+    --success-color: #2ECC71;
+    --warning-color: #F1C40F;
+    --error-color: #E74C3C;
+    --info-color: #3498DB;
+    
+    /* Colores de fondo */
+    --background-color: #F5F6FA;
+    --background-light: #FFFFFF;
+    --background-dark: #EEF2F7;
+    
+    /* Colores de texto */
+    --text-color: #2C3E50;
+    --text-light: #7F8C8D;
+    --text-dark: #2C3E50;
+    
+    /* Colores de borde */
+    --border-color: #E5E5E5;
+    --border-light: #F0F0F0;
+    --border-dark: #D1D1D1;
+}
+```
+
+## 2. PANEL DE GESTIÓN DE PELUQUERÍA
+
+### 2.1 Botones
+#### 2.1.1 Botones Principales
+```css
+/* Botón Principal */
+.primary-button {
+    background-color: var(--primary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    color: white;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.primary-button:hover {
+    background-color: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Botón Secundario */
+.secondary-button {
+    background-color: transparent;
+    border: 2px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* Botón de Acción del Salón */
+.salon-action-button {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+}
+```
+
+#### 2.1.2 Botones de Estado
+```css
+/* Botón de Éxito */
+.success-button {
+    background-color: var(--success-color);
+    color: white;
+}
+
+/* Botón de Advertencia */
+.warning-button {
+    background-color: var(--warning-color);
+    color: white;
+}
+
+/* Botón de Error */
+.error-button {
+    background-color: var(--error-color);
+    color: white;
+}
+```
+
+### 2.2 Secciones del Panel
+#### 2.2.1 Contenedores Principales
+```css
+.section {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.section-body {
+    padding: 1rem 0;
+}
+
+.section-footer {
+    margin-top: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--border-color);
+}
+```
+
+### 2.3 Formularios
+#### 2.3.1 Estructura Base
+```css
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(74,144,226,0.2);
+    outline: none;
+}
+```
+
+#### 2.3.2 Campos Específicos
+```css
+/* Select */
+.form-select {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: white;
+    cursor: pointer;
+}
+
+/* Textarea */
+.form-textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    resize: vertical;
+}
+
+/* Checkbox y Radio */
+.form-checkbox,
+.form-radio {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+```
+
+## 3. RESERVAS Y CALENDARIO
+
+### 3.1 Lista de Reservas
+#### 3.1.1 Estilos de Reservas
+```css
+.booking-item {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.booking-item.pendiente {
+    border-left: 4px solid var(--warning-color);
+    background-color: rgba(241,196,15,0.1);
+}
+
+.booking-item.confirmada {
+    border-left: 4px solid var(--success-color);
+    background-color: rgba(46,204,113,0.1);
+}
+
+.booking-item.cancelada {
+    border-left: 4px solid var(--error-color);
+    background-color: rgba(231,76,60,0.1);
+}
+```
+
+### 3.2 Calendario y Horarios
+#### 3.2.1 Cuadrícula de Horarios
+```css
+.schedule-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+    padding: 1rem;
+    background-color: var(--background-light);
+    border-radius: 8px;
+}
+
+.time-slot {
+    padding: 0.5rem;
+    text-align: center;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.time-slot.selected {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.time-slot.disabled {
+    background-color: var(--background-dark);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+```
+
+## 4. MODALES Y POPUPS
+
+### 4.1 Estructura Modal
+- .modal: Contenedor principal
+- .modal-content: Contenido del modal
+- .modal-header: Encabezado
+- .modal-footer: Pie del modal
+- .modal-close: Botón de cierre
+- .modal-backdrop: Fondo oscuro del modal
+- .modal-body: Contenido principal del modal
+
+### 4.2 Tipos de Modales
+#### 4.2.1 Modales de Gestión de Salón
+- #editInfoModal: Modal de edición de información del salón
+- #imageManagerModal: Modal de gestión de imágenes
+- #createSalonModal: Modal de creación de salón
+- #serviciosModal: Modal de gestión de servicios
+- #horariosModal: Modal de configuración de horarios
+- #empleadosModal: Modal de gestión de empleados
+- #estadisticasModal: Modal de visualización de estadísticas
+- #resenasModal: Modal de gestión de reseñas
+
+#### 4.2.2 Modales de Reservas
+- #nuevaReservaModal: Modal para crear nueva reserva
+- #editarReservaModal: Modal para editar reserva existente
+- #confirmarReservaModal: Modal de confirmación de reserva
+- #cancelarReservaModal: Modal de cancelación de reserva
+- #detalleReservaModal: Modal de detalles de reserva
+
+#### 4.2.3 Modales de Autenticación
+- #loginModal: Modal de inicio de sesión
+- #registerModal: Modal de registro
+- #recuperarPasswordModal: Modal de recuperación de contraseña
+- #verificacionModal: Modal de verificación de cuenta
+
+### 4.3 Personalización de Modales
+```css
+/* Estilo base del modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+/* Contenido del modal */
+.modal-content {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+}
+
+/* Encabezado del modal */
+.modal-header {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Pie del modal */
+.modal-footer {
+    border-top: 1px solid #eee;
+    padding-top: 1rem;
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+```
+
+### 4.4 Animaciones de Modales
+```css
+/* Animación de entrada */
+.modal.fade-in {
+    animation: modalFadeIn 0.3s ease-out;
+}
+
+/* Animación de salida */
+.modal.fade-out {
+    animation: modalFadeOut 0.3s ease-in;
+}
+
+@keyframes modalFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+```
+
+### 4.5 Responsive en Modales
+```css
+/* Ajustes para móvil */
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        padding: 1rem;
+    }
+    
+    .modal-footer {
+        flex-direction: column;
+    }
+}
+```
+
+## 5. ELEMENTOS DE NAVEGACIÓN
+
+### 5.1 Barra de Navegación
+- header: Barra superior
+- .logo: Logotipo
+- .search-bar: Barra de búsqueda
+- .auth-buttons: Botones de autenticación
+
+### 5.2 Menú de Usuario
+- .user-menu: Menú desplegable
+- .dropdown-content: Contenido desplegable
+- .user-info: Información del usuario
+
+## 6. RESPONSIVE Y MEDIA QUERIES
+
+### 6.1 Breakpoints Principales
+```css
+/* Móvil */
+@media (max-width: 480px) {
+    /* Modificaciones para móvil */
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    /* Modificaciones para tablet */
+}
+```
+
+## 7. ELEMENTOS INTERACTIVOS
+
+### 7.1 Carrusel de Imágenes
+```css
+.carousel-container {
+    position: relative;
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.carousel-main {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.carousel-thumbnails {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+}
+
+.carousel-thumbnail {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 5px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: all 0.3s ease;
+}
+
+.carousel-thumbnail.active {
+    opacity: 1;
+    border: 2px solid var(--primary-color);
+}
+
+.carousel-button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255,255,255,0.8);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.carousel-button.prev {
+    left: 1rem;
+}
+
+.carousel-button.next {
+    right: 1rem;
+}
+```
+
+### 7.2 Alertas y Notificaciones
+```css
+.alert {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    animation: slideIn 0.3s ease;
+}
+
+.alert-icon {
+    font-size: 1.2rem;
+}
+
+.alert-content {
+    flex: 1;
+}
+
+.alert-close {
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.3s ease;
+}
+
+.alert.success {
+    background-color: rgba(46,204,113,0.1);
+    border: 1px solid var(--success-color);
+    color: var(--success-color);
+}
+
+.alert.error {
+    background-color: rgba(231,76,60,0.1);
+    border: 1px solid var(--error-color);
+    color: var(--error-color);
+}
+
+.alert.warning {
+    background-color: rgba(241,196,15,0.1);
+    border: 1px solid var(--warning-color);
+    color: var(--warning-color);
+}
+
+.alert.info {
+    background-color: rgba(52,152,219,0.1);
+    border: 1px solid var(--info-color);
+    color: var(--info-color);
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+```
+
+## 8. ESTADÍSTICAS Y GRÁFICOS
+
+### 8.1 Tarjetas de Estadísticas
+```css
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.stat-card {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-light);
+    font-size: 0.9rem;
+}
+
+.stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.stat-trend.up {
+    color: var(--success-color);
+}
+
+.stat-trend.down {
+    color: var(--error-color);
+}
+```
+
+### 8.2 Gráficos
+```css
+.chart-container {
+    background-color: var(--background-light);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.chart-legend {
+    display: flex;
+    gap: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-light);
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+}
+```
+
+## 9. PERSONALIZACIÓN AVANZADA
+
+### 9.1 Animaciones
+```css
+/* Fade In Up */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Title Glow */
+@keyframes titleGlow {
+    0% {
+        text-shadow: 0 0 10px rgba(74,144,226,0);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(74,144,226,0.5);
+    }
+    100% {
+        text-shadow: 0 0 10px rgba(74,144,226,0);
+    }
+}
+
+/* Pulse */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* Rotate */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Shake */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+```
+
+### 9.2 Efectos de Hover
+```css
+/* Elevación */
+.hover-elevate {
+    transition: all 0.3s ease;
+}
+
+.hover-elevate:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Brillo */
+.hover-glow {
+    transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(74,144,226,0.5);
+}
+
+/* Escala */
+.hover-scale {
+    transition: all 0.3s ease;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+/* Rotación */
+.hover-rotate {
+    transition: all 0.3s ease;
+}
+
+.hover-rotate:hover {
+    transform: rotate(5deg);
+}
+```
+
+### 9.3 Filtros y Efectos
+```css
+/* Desenfoque */
+.blur-effect {
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+}
+
+/* Cristal */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Sombra Neomórfica */
+.neomorphic {
+    background: var(--background-light);
+    box-shadow: 
+        8px 8px 16px #d1d9e6,
+        -8px -8px 16px #ffffff;
+}
+```
+
+## 10. CONSEJOS GENERALES
+
+### 10.1 Mejores Prácticas
+1. Mantén la consistencia en colores y espaciados
+2. Usa las variables CSS para cambios globales
+3. Prueba los cambios en diferentes dispositivos
+4. Mantén las clases existentes para no romper la funcionalidad
+5. Haz copias de seguridad antes de modificar estilos
+
+### 10.2 Optimización
+1. Minimiza el uso de sombras y efectos en dispositivos móviles
+2. Utiliza las unidades rem para mejor escalabilidad
+3. Implementa lazy loading para imágenes
+4. Optimiza las animaciones para rendimiento
+5. Usa prefijos de navegador cuando sea necesario
+
+### 10.3 Accesibilidad
+1. Mantén un contraste adecuado entre texto y fondo
+2. Proporciona estados hover y focus visibles
+3. Usa tamaños de fuente legibles
+4. Implementa soporte para modo oscuro
+5. Asegura que los elementos interactivos sean accesibles por teclado

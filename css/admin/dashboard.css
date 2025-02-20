@@ -1,0 +1,160 @@
+/* Estilos para el dashboard */
+
+.dashboard-container {
+    padding: 20px;
+}
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+    color: #333;
+    margin: 0;
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+/* Widgets de estadísticas */
+.stat-widget {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.stat-widget h3 {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+}
+
+.stat-widget .stat-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+.stat-widget .stat-trend {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    margin-top: 10px;
+    font-size: 12px;
+}
+
+.stat-trend.positive {
+    color: #4CAF50;
+}
+
+.stat-trend.negative {
+    color: #f44336;
+}
+
+/* Gráficos */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.chart-container {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-height: 300px;
+}
+
+.chart-container h3 {
+    color: #333;
+    margin: 0 0 20px 0;
+    font-size: 16px;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 250px !important;
+}
+
+/* Lista de servicios populares */
+.popular-services {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.popular-services h3 {
+    color: #333;
+    margin: 0 0 20px 0;
+}
+
+.popular-service {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.popular-service:last-child {
+    border-bottom: none;
+}
+
+.service-name {
+    color: #333;
+    font-weight: 500;
+}
+
+.service-count {
+    color: #666;
+    font-size: 14px;
+}
+
+/* Widgets de clientes */
+.customer-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+}
+
+.customer-widget {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.customer-widget h3 {
+    color: #666;
+    font-size: 14px;
+    margin: 0 0 10px 0;
+}
+
+.customer-widget .customer-value {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+} 

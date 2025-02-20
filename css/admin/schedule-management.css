@@ -1,0 +1,179 @@
+/* Estilos para la gestión de horarios */
+
+.schedule-container {
+    padding: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.schedule-header {
+    margin-bottom: 30px;
+}
+
+.schedule-header h1 {
+    color: #333;
+    margin: 0;
+}
+
+.schedule-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.schedule-day {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.schedule-day h3 {
+    margin: 0;
+    color: #333;
+}
+
+/* Switch para activar/desactivar días */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 16px;
+    width: 16px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(26px);
+}
+
+/* Horarios */
+.schedule-hours {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+}
+
+.schedule-hours.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.time-input {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.time-input label {
+    font-size: 14px;
+    color: #666;
+}
+
+.time-input input[type="time"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.time-input input[type="time"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+/* Descanso */
+.break-time {
+    grid-column: 1 / -1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.break-time label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+    font-size: 14px;
+}
+
+.break-time input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+.break-hours {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 24px;
+}
+
+.break-hours.hidden {
+    display: none;
+}
+
+.break-hours input[type="time"] {
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.break-hours span {
+    color: #666;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .schedule-hours {
+        grid-template-columns: 1fr;
+    }
+
+    .break-hours {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+} 

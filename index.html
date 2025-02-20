@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="css/header.css">
     <link rel="stylesheet" href="css/salon-panel.css">
     <link rel="stylesheet" href="css/admin-panel.css">
-    
+    <link rel="stylesheet" href="css/notification.css">
 </head>
 <body>
     <div class="loader-container">
@@ -98,8 +98,106 @@
     </footer>
 
     <!-- JavaScript -->
-    <script src="js/config.js"></script>
+    <script src="js/globals.js"></script>
+    <script src="js/utils/ui-utils.js"></script>
+    <script src="js/utils/notification-utils.js"></script>
+    <script src="js/utils/search-utils.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/app.js"></script>
+    <script>
+        // Función para actualizar la UI cuando el usuario está logueado
+        async function updateUILoggedIn(user, userData) {
+            const authButtons = document.querySelector('.auth-buttons');
+            const userMenu = document.querySelector('.user-menu');
+            
+            // Ocultar botones de auth y mostrar menú de usuario
+            if (authButtons) authButtons.style.display = 'none';
+            if (userMenu) userMenu.style.display = 'flex';
+            
+            // Actualizar información del usuario
+            const userAvatar = userMenu.querySelector('.user-avatar');
+            const userName = userMenu.querySelector('.user-name');
+            const userRole = userMenu.querySelector('.user-role');
+            
+            // Establecer la primera letra del email como avatar
+            userAvatar.textContent = user.email.charAt(0).toUpperCase();
+            
+            // Establecer nombre de usuario (email o nombre si está disponible)
+            userName.textContent = userData.name || user.email;
+            
+            // Traducir y mostrar el rol
+            let roleText = 'Cliente';
+            if (userData.role === 'admin') roleText = 'Administrador';
+            if (userData.role === 'peluqueria') roleText = 'Peluquería';
+            userRole.textContent = roleText;
+            
+            // Configurar botones según el rol
+            const dropdownInner = userMenu.querySelector('.dropdown-content-inner');
+            
+            if (userData.role === 'admin') {
+                dropdownInner.innerHTML = `
+                    <button id="settingsBtn">
+                        <i class="fas fa-cog"></i> Panel Principal
+                    </button>
+                    <button id="statsBtn">
+                        <i class="fas fa-chart-bar"></i> Estadísticas
+                    </button>
+                    <button id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                `;
+            } else if (userData.role === 'peluqueria') {
+                dropdownInner.innerHTML = `
+                    <button id="settingsBtn">
+                        <i class="fas fa-cog"></i> Panel Principal
+                    </button>
+                    <button id="statsBtn">
+                        <i class="fas fa-chart-bar"></i> Estadísticas
+                    </button>
+                    <button id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                `;
+            } else {
+                dropdownInner.innerHTML = `
+                    <button id="settingsBtn">
+                        <i class="fas fa-cog"></i> Mi Cuenta
+                    </button>
+                    <button id="logoutBtn">
+                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                    </button>
+                `;
+            }
+
+            // Configurar event listeners
+            const logoutBtn = document.getElementById('logoutBtn');
+            const settingsBtn = document.getElementById('settingsBtn');
+            const statsBtn = document.getElementById('statsBtn');
+            
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', () => {
+                    auth.signOut();
+                });
+            }
+
+            if (settingsBtn) {
+                settingsBtn.addEventListener('click', () => {
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin/dashboard.html';
+                    } else if (userData.role === 'peluqueria') {
+                        window.location.href = 'salon/dashboard.html';
+                    } else {
+                        window.location.href = 'user/profile.html';
+                    }
+                });
+            }
+
+            if (statsBtn) {
+                statsBtn.addEventListener('click', () => {
+                    window.location.href = 'admin/stats.html';
+                });
+            }
+        }
+    </script>
 </body>
 </html>

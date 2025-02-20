@@ -1,0 +1,174 @@
+/* Estilos para la gestión de servicios */
+
+.services-container {
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.services-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.services-header h1 {
+    margin: 0;
+    color: #333;
+}
+
+.add-service-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.2s;
+}
+
+.add-service-btn:hover {
+    background-color: var(--primary-dark);
+}
+
+.service-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: transform 0.2s;
+}
+
+.service-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.service-info {
+    flex: 1;
+}
+
+.service-info h3 {
+    margin: 0 0 8px 0;
+    color: #333;
+}
+
+.service-info p {
+    margin: 0 0 12px 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.service-details {
+    display: flex;
+    gap: 20px;
+    color: #666;
+    font-size: 14px;
+}
+
+.price {
+    color: var(--primary-color);
+    font-weight: 600;
+}
+
+.duration {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.duration i {
+    color: #666;
+}
+
+.service-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-btn,
+.delete-btn {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background-color 0.2s;
+}
+
+.edit-btn {
+    color: var(--primary-color);
+}
+
+.edit-btn:hover {
+    background-color: rgba(33, 150, 243, 0.1);
+}
+
+.delete-btn {
+    color: var(--error-color);
+}
+
+.delete-btn:hover {
+    background-color: rgba(244, 67, 54, 0.1);
+}
+
+.service-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.service-form .form-group {
+    margin-bottom: 0;
+}
+
+.service-form textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    resize: vertical;
+    min-height: 100px;
+}
+
+.service-form textarea:focus {
+    border-color: var(--primary-color);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(33, 150, 243, 0.1);
+}
+
+.text-center {
+    text-align: center;
+    color: #666;
+    padding: 40px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .service-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .service-actions {
+        margin-top: 20px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .service-details {
+        flex-direction: column;
+        gap: 8px;
+    }
+} 
